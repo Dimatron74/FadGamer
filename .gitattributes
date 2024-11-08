@@ -1,4 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-website\static\css\styles_tailwind.css linguist-vendored
+website\static\css\* linguist-vendored
 website\static\css\tailwind.css linguist-vendored
