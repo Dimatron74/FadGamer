@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+website\static\css\styles_tailwind.css linguist-detectable=false
+website\static\css\tailwind.css linguist-detectable=false
