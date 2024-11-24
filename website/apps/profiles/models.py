@@ -1,11 +1,22 @@
 import uuid
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
-class User(AbstractBaseUser):
+class Role(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_default_role(cls):
+        return cls.objects.get_or_create(name='user')[0]
+
+class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    role = models.IntegerField()
+    roles = models.ManyToManyField(Role, related_name='users', blank=True)
     nickname = models.CharField(unique=True, max_length=255)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
@@ -14,14 +25,17 @@ class User(AbstractBaseUser):
     phone_number = models.CharField(null=True, max_length=20)
     is_blocked = models.BooleanField(default=False)
 
+    USERNAME_FIELD = 'nickname'
+    REQUIRED_FIELDS = ['email']
+
     def set_password(self, password):
         self.password = make_password(password)
 
     def check_password(self, password):
         return check_password(password, self.password)
 
-    @property
-    def is_staff(self):
-        return self.role == 1
-
+    def save(self, *args, **kwargs):
+        if not self.roles.exists():
+            self.roles.add(Role.get_default_role())
+        super().save(*args, **kwargs)
 

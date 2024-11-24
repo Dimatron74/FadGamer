@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'livereload',
     'compressor',
     'corsheaders',
+    'guardian',
 ]
 
 MIDDLEWARE = [
@@ -188,3 +189,5 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'profiles.User'
+
+ANONYMOUS_USER_ID = -1
