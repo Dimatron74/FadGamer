@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework-simplejwt',
+    'rest_framework_simplejwt',
     'rest_framework',
     'apps.admin_panel',
     'apps.contact',
@@ -186,3 +186,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissons.IsAuthenticated'
     )
 }
+
+AUTH_USER_MODEL = 'profiles.User'
