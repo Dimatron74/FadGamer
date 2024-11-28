@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'apps.news',
     'apps.profiles',
     'apps.support',
-    'livereload',
     'compressor',
     'corsheaders',
     'guardian',
@@ -62,7 +61,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'livereload.middleware.LiveReloadScript',
     'corsheaders.middleware.CorsMiddleware',
 ]
 
@@ -76,11 +74,17 @@ WSGI_APPLICATION = 'website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': '18091974',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
+
+# GUARDIAN_GET_INIT_ANONYMOUS_USER = 'apps.profiles.management.commands.create_anonymous_user'
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -184,10 +188,15 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissons.IsAuthenticated'
+        'rest_framework.permissions.IsAuthenticated'
     )
 }
 
 AUTH_USER_MODEL = 'profiles.User'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', 
+    'guardian.backends.ObjectPermissionBackend',
+)
 
 ANONYMOUS_USER_ID = -1
