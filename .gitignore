@@ -3,6 +3,7 @@
 node_modules/
 start.bat
 __pycache__/
+SQL запросы/
 
 
 
