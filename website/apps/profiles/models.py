@@ -98,9 +98,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)  # Сначала сохраняем объект self в базе данных
-        using = kwargs.get('using') or 'postgres'
-        print(using)
-        default_role = Role.objects.using(using).get_or_create(name='user')[0]
+        # using = kwargs.get('using')
+        # print(using)
+        # default_role = Role.objects.using(using).get_or_create(name='user')[0]
+        default_role = Role.objects.get_or_create(name='user')[0]
         if not self.roles.exists():
             self.roles.add(default_role)
 
