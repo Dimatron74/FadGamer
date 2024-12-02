@@ -2,11 +2,11 @@
     <div class="container mx-auto p-4">
         <div class="flex justify-center">
             <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-                <div class="text-3xl font-bold mb-4">Register</div>
+                <div class="text-3xl font-bold mb-4">Регистрация</div>
 
                 <form v-on:submit.prevent="submitForm" class="space-y-4">
                     <div class="flex flex-col">
-                        <label for="name" class="text-gray-700">Name</label>
+                        <label for="name" class="text-gray-700">Никнейм</label>
 
                         <input id="name" type="text" class="border border-gray-400 rounded p-2 w-full" v-model="form.name" required autofocus>
                     </div>
@@ -18,13 +18,13 @@
                     </div>
 
                     <div class="flex flex-col">
-                        <label for="password" class="text-gray-700">Password</label>
+                        <label for="password" class="text-gray-700">Пароль</label>
 
                         <input id="password" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password" required>
                     </div>
 
                     <div class="flex flex-col">
-                        <label for="password_confirm" class="text-gray-700">Confirm Password</label>
+                        <label for="password_confirm" class="text-gray-700">Повторите пароль</label>
 
                         <input id="password_confirm" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password_confirm" required>
                     </div>
@@ -34,10 +34,6 @@
                             <p v-for="error in errors" :key="error">{{ error }}</p>
                         </div>
                     </template>
-                    
-                    <button type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Тест кнопка
-                    </button> <br>
 
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Зарегистироваться

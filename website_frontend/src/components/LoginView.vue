@@ -1,7 +1,7 @@
 <template>
   <div class="flex justify-center">
     <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
-      <div class="text-3xl font-bold mb-4">Login</div>
+      <div class="text-3xl font-bold mb-4">Авторизация</div>
 
       <form @submit.prevent="submitForm" class="space-y-4">
         <div class="flex flex-col">
@@ -11,15 +11,21 @@
         </div>
 
         <div class="flex flex-col">
-          <label for="password" class="text-gray-700">Password</label>
+          <label for="password" class="text-gray-700">Пароль</label>
 
           <input id="password" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password" required>
         </div>
 
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Login
+          Авторизоваться
         </button>
       </form>
+
+      <div class="mt-4 text-center">
+        <RouterLink to="/signup" class="text-blue-500 hover:text-blue-700 underline">
+          У вас ещё нет аккаунта? Зарегистрироваться
+        </RouterLink>
+      </div>
     </div>
   </div>
 </template>
@@ -76,11 +82,11 @@ export default {
                 await axios
                     .get('/profiles/me/')
                     .then(res => {
-                        console.log('Аксиос:', axios.defaults.headers.common['Authorization'])
                         console.log('Пользователь', res.data)
-                        this.userStore.setUserInfo(res.data)
-
-                        this.$router.push('/')
+                        if (this.userStore.user.isAuthenticated) {
+                          this.userStore.setUserInfo(res.data)
+                          this.$router.push('/')
+                        }
                     })
                     .catch(err => {
                     console.log('error', err)
