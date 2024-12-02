@@ -26,7 +26,6 @@ class MyTokenObtainPairView(APIView):
             email = serializer.validated_data['email']
             user_email = UserEmail.objects.get(email__email=email)
             user = user_email.user
-            print('views', request.user)
             token = MyTokenObtainPairSerializer.get_token(user)
             return Response({'refresh': str(token), 'access': str(token.access_token)}, status=status.HTTP_200_OK)
         else:

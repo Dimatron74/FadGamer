@@ -2,6 +2,7 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { useUserStore } from '@/stores/user'
 
 import App from './App.vue'
 import router from './router'
@@ -17,3 +18,4 @@ app.mount('#app')
 
 
 axios.defaults.baseURL = "http://127.0.0.1:8000"
+

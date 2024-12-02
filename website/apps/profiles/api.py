@@ -13,7 +13,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 def me(request):
     authentication = JWTAuthentication()
     user, auth = authentication.authenticate(request)
-    print(user)
     if user:
         user_email = user.useremail_set.filter(is_active=True).first()
         if user_email:

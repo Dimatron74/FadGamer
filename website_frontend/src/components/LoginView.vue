@@ -66,7 +66,7 @@ export default {
                       const refreshToken = res.data.refresh;
                       const accessToken = res.data.access;
                       // console.log(refreshToken, accessToken);
-                      this.userStore.setToken(accessToken);
+                      this.userStore.setToken({ access: accessToken, refresh: refreshToken });
                       axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
                     })
                     .catch(err => {

@@ -5,6 +5,9 @@ import ToolingIcon from './icons/IconTooling.vue'
 import EcosystemIcon from './icons/IconEcosystem.vue'
 import CommunityIcon from './icons/IconCommunity.vue'
 import SupportIcon from './icons/IconSupport.vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -12,79 +15,77 @@ import SupportIcon from './icons/IconSupport.vue'
     <template #icon>
       <DocumentationIcon />
     </template>
-    <template #heading>Documentation</template>
+    <template #heading>Документация</template>
 
-    Vue’s
-    <a href="https://vuejs.org/" target="_blank" rel="noopener">official documentation</a>
-    provides you with all information you need to get started.
+    <p>
+      Здесь вы можете найти информацию о том, как работает наша студия, как мы создаем игры, как мы общаемся между собой
+    </p>
+
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <ToolingIcon />
     </template>
-    <template #heading>Tooling</template>
+    <template #heading>Инструменты</template>
 
-    This project is served and bundled with
-    <a href="https://vite.dev/guide/features.html" target="_blank" rel="noopener">Vite</a>. The
-    recommended IDE setup is
-    <a href="https://code.visualstudio.com/" target="_blank" rel="noopener">VSCode</a>
-    +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank" rel="noopener">Volar</a>. If
-    you need to test your components and web pages, check out
-    <a href="https://www.cypress.io/" target="_blank" rel="noopener">Cypress</a>
-    and
-    <a href="https://on.cypress.io/component" target="_blank" rel="noopener"
-      >Cypress Component Testing</a
-    >.
-
-    <br />
-
-    More instructions are available in <code>README.md</code>.
+    <p>
+      Мы используем
+      <a href="https://www.blender.org/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Blender</a>,
+      <a href="https://unity.com/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Godot</a>,
+      <a href="https://pixso.net" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Pixso</a>,
+      и 
+      <a href="https://code.visualstudio.com/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">VSCode</a>
+    </p>
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <EcosystemIcon />
     </template>
-    <template #heading>Ecosystem</template>
+    <template #heading>Экосистема</template>
 
-    Get official tools and libraries for your project:
-    <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener">Pinia</a>,
-    <a href="https://router.vuejs.org/" target="_blank" rel="noopener">Vue Router</a>,
-    <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener">Vue Test Utils</a>, and
-    <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener">Vue Dev Tools</a>. If
-    you need more resources, we suggest paying
-    <a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">Awesome Vue</a>
-    a visit.
+    <p>
+      Мы используем
+      <a href="https://pinia.vuejs.org/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Pinia</a>,
+      <a href="https://router.vuejs.org/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Vue Router</a>,
+      <a href="https://test-utils.vuejs.org/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Vue Test Utils</a>,
+      <a href="https://github.com/vuejs/devtools" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Vue Dev Tools</a>
+    </p>
+
   </WelcomeItem>
 
   <WelcomeItem>
     <template #icon>
       <CommunityIcon />
     </template>
-    <template #heading>Community</template>
+    <template #heading>Сообщество</template>
 
-    Got stuck? Ask your question on
-    <a href="https://chat.vuejs.org" target="_blank" rel="noopener">Vue Land</a>, our official
-    Discord server, or
-    <a href="https://stackoverflow.com/questions/tagged/vue.js" target="_blank" rel="noopener"
-      >StackOverflow</a
-    >. You should also subscribe to
-    <a href="https://news.vuejs.org" target="_blank" rel="noopener">our mailing list</a>
-    and follow the official
-    <a href="https://twitter.com/vuejs" target="_blank" rel="noopener">@vuejs</a>
-    twitter account for latest news in the Vue world.
+    <p>
+      Если у вас есть вопросы, вы можете задать их на
+      <a href="https://www.youtube.com/c/FadGamer/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">нашем YouTube канале</a>,
+      <a href="https://vk.com/fadgamer" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">группе VK</a>,
+      <a href="https://discord.gg/4PZ4S6rS" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">Telegram</a>
+      или
+      <a href="https://www.twitch.tv/fadgamer" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">BiliBili</a>
+    </p>
   </WelcomeItem>
 
-  <WelcomeItem>
+  <WelcomeItem v-if="userStore.user.access">
     <template #icon>
       <SupportIcon />
     </template>
-    <template #heading>Support Vue</template>
+    <template #heading>Вы авторизированы!</template>
 
-    As an independent project, Vue relies on community backing for its sustainability. You can help
-    us by
-    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener">becoming a sponsor</a>.
+    Вы действительно авторизированы. Приветствуем вас, {{ userStore.user.name }},
+    <a href="https://vuejs.org/sponsor/" target="_blank" rel="noopener" class="text-blue-500 hover:text-blue-700 underline">поэтому станьте ближе к нам</a>!
+  </WelcomeItem>
+  <WelcomeItem v-else>
+    <template #icon>
+      <SupportIcon />
+    </template>
+    <template #heading>Войдите в систему</template>
+
+    <a href="/login/" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Авторизоваться</a>
   </WelcomeItem>
 </template>

@@ -1,6 +1,8 @@
 import axios from "axios"
 import { defineStore } from 'pinia'
 
+axios.defaults.baseURL = 'http://127.0.0.1:8000'
+
 export const useUserStore = defineStore({
     id: "user",
     state: () => ({
@@ -27,6 +29,8 @@ export const useUserStore = defineStore({
                 this.refreshToken()
 
                 console.log('Initialize user: ', this.user)
+            } else {
+                console.log('Тут пусто походу', this.user)
             }
         },
 
@@ -75,11 +79,13 @@ export const useUserStore = defineStore({
             axios.post('/profiles/api/refresh/', {
                 refresh: this.user.refresh
             }).then(res => {
+                console.log('Токен рефреш', this.user.refresh)
+                console.log('Токен доступ', this.user.access)
                 this.user.access = res.data.access
 
-                localStorage.setItem('user.access', res.user.access)
+                localStorage.setItem('user.access', res.data.access)
 
-                axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.user.access
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + res.data.access
             }).catch(err => {
                 console.log(err)
 
