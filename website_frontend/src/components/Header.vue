@@ -1,15 +1,23 @@
 <template>
-  <header class="bg-black bg-opacity-90 text-white body-font">
-    <div class="container mx-3 flex flex-wrap p-3 flex-col md:flex-row items-center">
-      <RouterLink to="/" class="mr-5 hover:text-gray-900">
-        <span class="ml-3 text-xl">FadGamers</span>
-      </RouterLink>
-      <nav class="md:mr-auto md:ml-4 md:py-1 md:pl-4 md:border-l md:border-gray-700	flex flex-wrap items-center text-base justify-center">
-        <RouterLink to="/about" class="mr-5 hover:text-gray-900">О нас</RouterLink>
-        <RouterLink v-if="!userStore.user.access" to="/signup" class="mr-5 hover:text-gray-900">Зарегистироваться</RouterLink>
-        <RouterLink v-if="!userStore.user.access" to="/login" class="mr-5 hover:text-gray-900">Авторизоваться</RouterLink>
-        <button v-else @click="userStore.removeToken()" class="mr-5 hover:text-gray-900">Выйти</button>
+  <header class="bg-black bg-opacity-90 text-white body-font" style="font-family: 'Roboto', sans-serif; font-weight: bold;">
+    <div class="w-full flex p-6 flex-col md:flex-row items-center h-20">
+      <div class="flex items-center justify-start">
+        <RouterLink to="/">
+          <div class="text-2xl w-48 text-center">FAD GAMERS</div>
+        </RouterLink>
+      </div>
+      <nav class="flex items-center text-lg justify-between gap-10 ml-[74px] tracking-wider">
+        <RouterLink to="/about" class="hover:text-gray-900">ГЛАВНАЯ</RouterLink>
+        <RouterLink to="/about" class=" hover:text-gray-900">ИГРЫ</RouterLink>
+        <RouterLink to="/about" class=" hover:text-gray-900">НОВОСТИ</RouterLink>
+        <RouterLink to="/about" class=" hover:text-gray-900">ЦЕНТР ПОДДЕРЖКИ</RouterLink>
+        <RouterLink to="/about" class=" hover:text-gray-900">ДРУГОЕ</RouterLink>
       </nav>
+      <div class="flex items-center justify-end gap-10 ml-auto">
+        <RouterLink v-if="!userStore.user.access" to="/signup" class=" hover:text-gray-900">Зарегистироваться</RouterLink>
+        <RouterLink v-if="!userStore.user.access" to="/login" class=" hover:text-gray-900">Авторизоваться</RouterLink>
+        <button v-else @click="userStore.removeToken()" class=" hover:text-gray-900">Выйти</button>
+      </div>
     </div>
   </header>
 </template>

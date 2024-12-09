@@ -4,6 +4,7 @@
   import { useUserStore } from '@/stores/user'
   import axios from 'axios'
   import Header from '@/components/Header.vue'
+  import Footer from '@/components/Footer.vue'
 
   const userStore = useUserStore()
   const userAccess = ref(userStore.user.access)
@@ -28,4 +29,5 @@
 <template>
   <Header :user-store="userStore" />
   <RouterView />
+  <Footer :user-store="userStore" />
 </template>
