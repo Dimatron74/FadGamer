@@ -8,7 +8,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
         token['user'] = user.nickname
-        return token
+        data = {
+            'refresh': str(token),
+            'access': str(token.access_token),
+            'nickname': token['user']
+        }
+        return data
     
 
     email = serializers.EmailField()

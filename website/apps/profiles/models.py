@@ -60,7 +60,45 @@ class UserEmail(models.Model):
         unique_together = ('user', 'email')
 
     def __str__(self):
-        return f'{self.user.name} - {self.email.email}'
+        return f'{self.user.nickname} - {self.email.email}'
+
+
+class Service(models.Model):
+    name = models.CharField(unique=True)
+
+    def __str__(self):
+        return self.name
+
+class UserService(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'service')
+
+    def __str__(self):
+        return f'{self.user.nickname} - {self.service.name}'
+
+
+class AccountLock(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="locked_accounts")
+    blocked_by = models.ForeignKey("User", on_delete=models.CASCADE, related_name="blocked_accounts", null=True, blank=True)
+    reason = models.CharField(default="Без причины", max_length=255)
+    blocked_at = models.DateTimeField(auto_now_add=True)
+    unblocked_at = models.DateTimeField(null=True, blank=True)
+    is_unblocked = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Аккаунт {user.nickname} был заблокирован по причине: {self.reason}'
+
+
+
+
+
+
 
 
 
@@ -104,4 +142,5 @@ class User(AbstractBaseUser, PermissionsMixin):
         default_role = Role.objects.get_or_create(name='user')[0]
         if not self.roles.exists():
             self.roles.add(default_role)
+
 

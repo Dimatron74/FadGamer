@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .serializers import MyTokenObtainPairSerializer
+from . import permissions
 
 def index(request):
     return HttpResponse("Welcome to the Page")
@@ -27,7 +28,8 @@ class MyTokenObtainPairView(APIView):
             user_email = UserEmail.objects.get(email__email=email)
             user = user_email.user
             token = MyTokenObtainPairSerializer.get_token(user)
-            return Response({'refresh': str(token), 'access': str(token.access_token)}, status=status.HTTP_200_OK)
+            # return Response({'refresh': str(token), 'access': str(token.access_token)}, status=status.HTTP_200_OK)
+            return Response(token, status=status.HTTP_200_OK)
         else:
             # Обработка невалидных данных
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
