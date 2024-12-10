@@ -6,3 +6,6 @@ class ProfilesConfig(AppConfig):
     name = 'apps.profiles'
     label = 'profiles'
     verbose_name = 'Профили'
+
+    # def ready(self):
+    #     from . import permissions
