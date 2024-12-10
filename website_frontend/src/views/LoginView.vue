@@ -69,6 +69,7 @@ export default {
                 await axios
                     .post('/profiles/login/', this.form)
                     .then(res => {
+                      console.log("Токен из апи", res.data)
                       const refreshToken = res.data.refresh;
                       const accessToken = res.data.access;
                       // console.log(refreshToken, accessToken);
