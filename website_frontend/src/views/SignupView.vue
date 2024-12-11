@@ -47,16 +47,8 @@
 
 <script>
 import axios from 'axios'
-import { useToastStore } from '@/stores/toast'
 
 export default {
-    setup() {
-        const toastStore = useToastStore()
-
-        return {
-            toastStore
-        }
-    },
     data() {
         return {
             form: {

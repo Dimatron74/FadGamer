@@ -13,7 +13,7 @@ function submitSurvey() {
 </script>
 
 
-
+<!-- Заглушка "О Нас" -->
 <template>
   <div class="about bg-gray-900 py-20">
     <div class="container mx-auto px-6 md:px-12">
