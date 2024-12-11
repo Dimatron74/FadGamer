@@ -3,7 +3,7 @@
     <div class="container mx-auto">
       <div class="flex justify-between items-center">
         <div class="text-sm">
-          &copy; 2023 Your Company. All rights reserved.
+          &copy; 2024 FadGamers. All rights reserved.
         </div>
         <nav class="space-x-4">
           <RouterLink to="/about" class="hover:text-gray-400">О нас</RouterLink>
