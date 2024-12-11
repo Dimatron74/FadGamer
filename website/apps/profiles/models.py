@@ -92,7 +92,7 @@ class AccountLock(models.Model):
     is_unblocked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Аккаунт {user.nickname} был заблокирован по причине: {self.reason}'
+        return f'Аккаунт {self.user.nickname} был заблокирован по причине: {self.reason}'
 
 
 
