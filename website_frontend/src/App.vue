@@ -3,8 +3,8 @@
   import { ref, onMounted, watchEffect } from 'vue'
   import { useUserStore } from '@/stores/user'
   import axios from 'axios'
-  import Header from '@/components/Header.vue'
-  import Footer from '@/components/Footer.vue'
+  import Header from '@/components/main/Header.vue'
+  import Footer from '@/components/main/Footer.vue'
 
   const userStore = useUserStore()
   const userAccess = ref(userStore.user.access)
