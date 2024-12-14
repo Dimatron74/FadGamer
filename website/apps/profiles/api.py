@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from django.middleware.csrf import get_token
 
 
 @api_view(['GET'])
@@ -49,3 +50,6 @@ def signup(request):
         message = 'error'
 
     return JsonResponse({'message': message})
+
+def get_csrf_token(request):
+    return JsonResponse({'csrf_token': get_token(request)})

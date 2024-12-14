@@ -31,7 +31,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import { useUserStore } from '@/stores/user'
 import axios from 'axios'
 

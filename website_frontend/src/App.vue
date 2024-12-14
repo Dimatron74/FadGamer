@@ -5,6 +5,7 @@
   import axios from 'axios'
   import Header from '@/components/main/Header.vue'
   import Footer from '@/components/main/Footer.vue'
+  import VueCookies from 'vue-cookies';
 
   const userStore = useUserStore()
   const userAccess = ref(userStore.user.access)
@@ -23,9 +24,14 @@
 
   onMounted(() => {
     userStore.initStore()
+    axios.get('profiles/api/csrf-token/')
+      .then(response => {
+        VueCookies.set('csrftoken', response.data.csrf_token);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   })
-
-
 </script>
 
 <template>

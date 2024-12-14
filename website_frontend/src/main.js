@@ -22,7 +22,7 @@ app.use(router, axios)
 
 app.mount('#app')
 
-
+axios.defaults.headers.common['X-CSRFToken'] = VueCookies.get('csrftoken');
 
 
 
