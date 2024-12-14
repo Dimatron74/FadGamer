@@ -7,8 +7,8 @@
         </div>
         <nav class="space-x-4">
           <RouterLink to="/about" class="hover:text-gray-400">О нас</RouterLink>
-          <RouterLink to="/contact" class="hover:text-gray-400">Контакты</RouterLink>
-          <RouterLink to="/privacy" class="hover:text-gray-400">Политика конфиденциальности</RouterLink>
+          <RouterLink to="/" class="hover:text-gray-400">Контакты</RouterLink>
+          <RouterLink to="/" class="hover:text-gray-400">Политика конфиденциальности</RouterLink>
         </nav>
       </div>
     </div>
