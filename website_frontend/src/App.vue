@@ -34,6 +34,8 @@
   })
 </script>
 
+
+
 <template>
   <Header :user-store="userStore" />
   <RouterView />
