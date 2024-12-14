@@ -32,10 +32,13 @@ const removeToken = () => {
           <div class="w-2/3">{{ userStore.user.email }}</div>
         </div>
 
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
           Редактировать профиль
         </button>
-        <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4">Выйти</button>
+        <button @click="router.push('/promo')" class="bg-mypurple-5 hover:bg-mypurple-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
+          Активировать промокод
+        </button>
+        <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Выйти</button>
       </div>
     </div>
   </div>

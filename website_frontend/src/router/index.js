@@ -3,6 +3,7 @@ import HomeView from '@/views/main/HomeView.vue'
 import SignupView from '@/views/profiles/SignupView.vue'
 import LoginView from '@/views/profiles/LoginView.vue'
 import ProfileView from '@/views/profiles/ProfileView.vue'
+import PromoView from '@/views/profiles/PromoView.vue'
 import authMiddleware from './middleware/authMiddleware'
 
 const router = createRouter({
@@ -35,6 +36,12 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
+      beforeEnter: authMiddleware,
+    },
+    {
+      path: '/promo',
+      name: 'promo',
+      component: PromoView,
       beforeEnter: authMiddleware,
     },
   ],
