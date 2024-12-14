@@ -30,12 +30,11 @@ export const useUserStore = defineStore({
 
                 console.log('Initialize user: ', this.user)
             } else {
-                console.log('Тут пусто походу', this.user)
+                console.log('Пользователь не определён', this.user)
             }
         },
 
         setToken(data) {
-            console.log('setToken', data)
             this.user.access = data.access
             this.user.refresh = data.refresh
             this.user.isAuthenticated = true
@@ -59,6 +58,9 @@ export const useUserStore = defineStore({
             localStorage.removeItem('user.id')
             localStorage.removeItem('user.email')
             localStorage.removeItem('user.name')
+
+            axios.defaults.headers.common['Authorization'] = ''
+            window.location.reload();
         },
 
         setUserInfo(user) {
