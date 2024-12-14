@@ -44,8 +44,6 @@ export const useUserStore = defineStore({
         },
 
         removeToken() {
-            console.log('removeToken')
-
             this.user.access = null
             this.user.refresh = null
             this.user.isAuthenticated = false
@@ -53,14 +51,15 @@ export const useUserStore = defineStore({
             this.user.email = null
             this.user.name = null
 
-            localStorage.removeItem('user.access')
-            localStorage.removeItem('user.refresh')
-            localStorage.removeItem('user.id')
-            localStorage.removeItem('user.email')
-            localStorage.removeItem('user.name')
+            // Очистка кеша
+            const keys = Object.keys(localStorage)
+            keys.forEach(key => {
+                if (key.startsWith('user.')) {
+                localStorage.removeItem(key)
+                }
+            })
 
             axios.defaults.headers.common['Authorization'] = ''
-            window.location.reload();
         },
 
         setUserInfo(user) {
