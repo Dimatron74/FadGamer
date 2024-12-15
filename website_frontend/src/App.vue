@@ -37,9 +37,9 @@
 
 
 <template>
-  <Header :user-store="userStore" />
-  <main class="bg-myblack-4 text-mywhite-5 min-h-screen flex flex-col justify-center">
+  <Header :user-store="userStore"/>
+  <main class="bg-myblack-4 text-mywhite-5 min-h-screen flex flex-col justify-center" style="font-family: 'Roboto', sans-serif; font-weight: 400;" id="top">
     <RouterView />
   </main>
-  <Footer :user-store="userStore" />
+  <Footer :user-store="userStore" style="font-family: 'Roboto', sans-serif; font-weight: 400;"/>
 </template>
