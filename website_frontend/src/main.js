@@ -7,7 +7,9 @@ import { useUserStore } from '@/stores/user'
 import App from './App.vue'
 import router from './router'
 import axios from 'axios'
-import VueCookies from 'vue-cookies';
+import VueCookies from 'vue-cookies'
+import VueScrollTo from 'vue-scrollto'
+
 
 // шрифты
 import '@/assets/fonts/Roboto-Regular.ttf'
@@ -19,8 +21,10 @@ const app = createApp(App)
 
 app.use(createPinia())
 app.use(router, axios)
+app.directive('scroll-to', VueScrollTo)
 
 app.mount('#app')
+
 
 axios.defaults.headers.common['X-CSRFToken'] = VueCookies.get('csrftoken');
 
