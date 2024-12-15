@@ -4,7 +4,7 @@ import SignupView from '@/views/profiles/SignupView.vue'
 import LoginView from '@/views/profiles/LoginView.vue'
 import ProfileView from '@/views/profiles/ProfileView.vue'
 import PromoView from '@/views/profiles/PromoView.vue'
-import authMiddleware from './middleware/authMiddleware'
+import { noAuthMiddleware, authMiddleware } from './middleware/authMiddleware'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,23 +26,25 @@ const router = createRouter({
       path: '/signup',
       name: 'signup',
       component: SignupView,
+      beforeEnter: authMiddleware,
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
+      beforeEnter: authMiddleware,
     },
     {
       path: '/profile',
       name: 'profile',
       component: ProfileView,
-      beforeEnter: authMiddleware,
+      beforeEnter: noAuthMiddleware,
     },
     {
       path: '/promo',
       name: 'promo',
       component: PromoView,
-      beforeEnter: authMiddleware,
+      beforeEnter: noAuthMiddleware,
     },
   ],
 })
