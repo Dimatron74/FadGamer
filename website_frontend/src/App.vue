@@ -38,6 +38,8 @@
 
 <template>
   <Header :user-store="userStore" />
-  <RouterView />
+  <main class="bg-myblack-4 text-mywhite-5 min-h-screen flex flex-col justify-center">
+    <RouterView />
+  </main>
   <Footer :user-store="userStore" />
 </template>
