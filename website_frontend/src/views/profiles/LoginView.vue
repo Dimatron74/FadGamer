@@ -1,19 +1,19 @@
 <template>
   <div class="flex justify-center">
-    <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+    <div class="w-1/2 bg-myblack-3 rounded-lg shadow-lg p-4">
       <div class="text-3xl font-bold mb-4">Авторизация</div>
 
       <form @submit.prevent="submitForm" class="space-y-4">
         <div class="flex flex-col">
-          <label for="email" class="text-gray-700">Email</label>
+          <label for="email" class="">Email</label>
 
-          <input id="email" type="email" class="border border-gray-400 rounded p-2 w-full" v-model="form.email" required>
+          <input id="email" type="email" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.email" required>
         </div>
 
         <div class="flex flex-col">
-          <label for="password" class="text-gray-700">Пароль</label>
+          <label for="password" class="">Пароль</label>
 
-          <input id="password" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password" required>
+          <input id="password" type="password" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.password" required>
         </div>
 
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">

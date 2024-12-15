@@ -13,22 +13,22 @@ const removeToken = () => {
 
 <template>
   <div class="container mx-auto p-4">
-    <div class="w-full bg-white rounded-lg shadow-lg p-4">
+    <div class="w-full bg-myblack-3 rounded-lg shadow-lg p-4">
       <div class="text-3xl font-bold mb-4">Профиль пользователя</div>
       
       <div class="flex flex-col space-y-4">
         <div class="flex items-center">
-          <label class="w-1/3 text-gray-700" for="username">UUID:</label>
+          <label class="w-1/3" for="username">UUID:</label>
           <div class="w-2/3">{{ userStore.user.id }}</div>
         </div>
 
         <div class="flex items-center">
-          <label class="w-1/3 text-gray-700" for="username">Никнейм:</label>
+          <label class="w-1/3" for="username">Никнейм:</label>
           <div class="w-2/3">{{ userStore.user.name }}</div>
         </div>
         
         <div class="flex items-center">
-          <label class="w-1/3 text-gray-700" for="email">Email:</label>
+          <label class="w-1/3" for="email">Email:</label>
           <div class="w-2/3">{{ userStore.user.email }}</div>
         </div>
 

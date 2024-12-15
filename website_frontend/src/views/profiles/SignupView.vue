@@ -1,32 +1,32 @@
 <template>
     <div class="container mx-auto p-4">
         <div class="flex justify-center">
-            <div class="w-1/2 bg-white rounded-lg shadow-lg p-4">
+            <div class="w-1/2 bg-myblack-3 rounded-lg shadow-lg p-4">
                 <div class="text-3xl font-bold mb-4">Регистрация</div>
 
                 <form v-on:submit.prevent="submitForm" class="space-y-4">
                     <div class="flex flex-col">
-                        <label for="name" class="text-gray-700">Никнейм</label>
+                        <label for="name" class="">Никнейм</label>
 
-                        <input id="name" type="text" class="border border-gray-400 rounded p-2 w-full" v-model="form.name" required autofocus>
+                        <input id="name" type="text" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.name" required autofocus>
                     </div>
 
                     <div class="flex flex-col">
-                        <label for="email" class="text-gray-700">Email</label>
+                        <label for="email" class="">Email</label>
 
-                        <input id="email" type="email" class="border border-gray-400 rounded p-2 w-full" v-model="form.email" required>
+                        <input id="email" type="email" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.email" required>
                     </div>
 
                     <div class="flex flex-col">
-                        <label for="password" class="text-gray-700">Пароль</label>
+                        <label for="password" class="">Пароль</label>
 
-                        <input id="password" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password" required>
+                        <input id="password" type="password" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.password" required>
                     </div>
 
                     <div class="flex flex-col">
-                        <label for="password_confirm" class="text-gray-700">Повторите пароль</label>
+                        <label for="password_confirm" class="">Повторите пароль</label>
 
-                        <input id="password_confirm" type="password" class="border border-gray-400 rounded p-2 w-full" v-model="form.password_confirm" required>
+                        <input id="password_confirm" type="password" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.password_confirm" required>
                     </div>
 
                     <template v-if="errors.length > 0">
