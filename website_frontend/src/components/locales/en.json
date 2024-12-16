@@ -6,10 +6,16 @@
     "submit": "Submit"
   },
   "navigation": {
-    "home": "Home",
+    "home": "HOME",
     "about": "About",
-    "contact": "Contact",
-    "language": "Switch Language"
+    "contact": "Cooperation",
+    "language": "Change language",
+    "games": "GAMES",
+    "news": "NEWS",
+    "support": "SUPPORT",
+    "other": "OTHER",
+    "promo": "Activate promocode",
+    "profile": "PROFILE"
   },
   "auth": {
     "login": "Login",
@@ -30,7 +36,10 @@
   "blog": {
     "recent_posts": "Recent Posts",
     "read_more": "Read more"
+  },
+  "main": {
+    "policy": "Privacy Policy",
+    "license": "License Agreement",
+    "copyright": "All rights reserved."
   }
 }
-
-  
