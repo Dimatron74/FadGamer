@@ -29,4 +29,15 @@ class MyTokenObtainPairView(APIView):
             # Обработка невалидных данных
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+
+
+from django.utils.translation import gettext as _
+
+def my_view(request):
+    message = _("Hello, world!")
+    message2 = _("You are next")
+    message3 = _("Hello, world!")
+    print(message)
+    return HttpResponse(message)
+
     
