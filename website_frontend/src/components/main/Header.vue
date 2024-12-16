@@ -7,16 +7,16 @@
         </RouterLink>
       </div>
       <nav class="items-center text-lg justify-between ml-[74px] tracking-wider gap-2 hidden tablet-max:flex desktop-min:gap-10">
-        <RouterLink to="/" class="hover:text-mywhite-5" @click="scrollToTop">ГЛАВНАЯ</RouterLink>
-        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">ИГРЫ</RouterLink>
-        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">НОВОСТИ</RouterLink>
-        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">ЦЕНТР ПОДДЕРЖКИ</RouterLink>
+        <RouterLink to="/" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.home') }}</RouterLink>
+        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.games') }}</RouterLink>
+        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.news') }}</RouterLink>
+        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.support') }}</RouterLink>
         <div @click="toggleDropdown" class="relative z-10">
-          <span class="cursor-pointer hover:text-mywhite-5">ДРУГОЕ</span>
+          <span class="cursor-pointer hover:text-mywhite-5">{{ $t('navigation.other') }}</span>
           <div v-if="dropdownOpen" class="absolute bg-myblack-2 shadow-lg mt-2">
-            <RouterLink to="/promo" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">Активировать промокод</RouterLink>
-            <RouterLink to="/about" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">О компании</RouterLink>
-            <RouterLink to="" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">Сотрудничество</RouterLink>
+            <RouterLink to="/promo" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.promo') }}</RouterLink>
+            <RouterLink to="/about" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.about') }}</RouterLink>
+            <RouterLink to="" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.contact') }}</RouterLink>
           </div>
         </div>
       </nav>
@@ -25,7 +25,7 @@
           <span>ВОЙТИ</span>
           <IconProfile />
         </RouterLink>
-        <RouterLink v-else to="/profile" class="hover:text-mywhite-5" @click="scrollToTop">ПРОФИЛЬ</RouterLink>
+        <RouterLink v-else to="/profile" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.profile') }}</RouterLink>
       </div>
     </div>
   </header>

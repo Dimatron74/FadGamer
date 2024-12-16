@@ -3,16 +3,16 @@
     <nav class="container mx-auto flex flex-col justify-center items-center text-mywhite-1">
       <ul class="flex items-center justify-center gap-5 text-sm pb-5">
         <li>
-          <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">О компании</RouterLink>
+          <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.about') }}</RouterLink>
         </li>
         <li>
-          <RouterLink to="/" class="">Сотрудничество</RouterLink>
+          <RouterLink to="/" class="">{{ $t('navigation.contact') }}</RouterLink>
         </li>
         <li>
-          <RouterLink to="/" class="">Политика конфиденциальности</RouterLink>
+          <RouterLink to="/" class="">{{ $t('main.policy') }}</RouterLink>
         </li>
         <li>
-          <RouterLink to="/" class="">Лицензионное соглашение</RouterLink>
+          <RouterLink to="/" class="">{{ $t('main.license') }}</RouterLink>
         </li>
       </ul>
       <ul class="flex items-center justify-center gap-5 pb-[30px]">
@@ -43,9 +43,9 @@
         </li>
       </ul>
       <div class="text-3xl text-center pb-3" style="font-family: 'Roboto', sans-serif; font-weight: bold;">FAD GAMERS</div>
-      <div class="mt-auto text-base text-gray-500">&copy; 2024 FadGamers. Все права защищены.</div>
+      <div class="mt-auto text-base text-gray-500">&copy; 2024 FadGamers. {{ $t('main.copyright') }}</div>
     </nav>
-    <button class="absolute right-4 bottom-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" @click="switchLanguage(locale === 'ru' ? 'en' : 'ru')">
+    <button class="absolute right-4 bottom-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" @click="switchLanguage">
       {{ $t('navigation.language') }}
     </button>
   </footer>
@@ -75,11 +75,23 @@ function scrollToTop() {
 
 
 const { t, locale } = useI18n(); 
+
 // Функция для смены языка
 function switchLanguage(language) {
-  locale.value = language;  // Меняем язык с помощью vue-i18n
-  localStorage.setItem('lang', language);  // Сохраняем выбранный язык в localStorage
-  console.log('Язык изменён на', language);
+  const currentLocale = locale.value;
+  let newLocale;
+  if (currentLocale === 'ru') {
+    newLocale = 'en';
+  } else if (currentLocale === 'en') {
+    newLocale = 'cn';
+  } else if (currentLocale === 'cn') {
+    newLocale = 'hi';
+  } else {
+    newLocale = 'ru';
+  }
+  locale.value = newLocale;  // Меняем язык с помощью vue-i18n
+  localStorage.setItem('lang', newLocale);  // Сохраняем выбранный язык в localStorage
+  console.log('Язык изменён на', newLocale);
 }
 
 watchEffect(() => {
