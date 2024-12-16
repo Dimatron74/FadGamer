@@ -7,6 +7,8 @@ const messages = { en, ru };
 const i18n = createI18n({
   locale: 'ru', // язык по умолчанию
   fallbackLocale: 'en', // язык на случай отсутствия перевода
+  legacy: false,
+  globalInjection: true,
   messages,
 });
 
