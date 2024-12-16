@@ -34,7 +34,6 @@
 <script setup>
 import { ref } from 'vue';
 import IconProfile from "@/components/icons/IconProfile.vue";
-import { defineProps } from 'vue';
 
 const props = defineProps({
   userStore: {
