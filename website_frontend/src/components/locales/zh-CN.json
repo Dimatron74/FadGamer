@@ -1,0 +1,45 @@
+{
+  "auth": {
+    "forgot_password": "忘记密码了吗？",
+    "login": "入口",
+    "logout": "出口",
+    "register": "登记"
+  },
+  "blog": {
+    "read_more": "阅读更多",
+    "recent_posts": "最新帖子"
+  },
+  "errors": {
+    "404": "找不到页面",
+    "500": "内部服务器错误"
+  },
+  "global": {
+    "cancel": "取消",
+    "save": "节省",
+    "submit": "发送",
+    "welcome": "欢迎来到FADGAMERS"
+  },
+  "navigation": {
+    "about": "关于公司",
+    "contact": "合作",
+    "home": "家",
+    "language": "更改语言",
+    "games": "游戏",
+    "news": "消息",
+    "support": "支持",
+    "other": "其他",
+    "promo": "激活促销代码",
+    "profile": "个人资料"
+  },
+  "validation": {
+    "email_invalid": "电子邮件地址无效",
+    "max_length": "最大长度：{max} 个字符",
+    "min_length": "最小长度：{min} 个字符",
+    "required": "此字段是必需的"
+  },
+  "main": {
+    "policy": "隐私政策",
+    "license": "许可协议",
+    "copyright": "版权所有。"
+  }
+}

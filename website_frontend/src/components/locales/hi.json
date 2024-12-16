@@ -1,0 +1,22 @@
+{
+  "main": {
+    "copyright": "सर्वाधिकार सुरक्षित।",
+    "license": "लाइसेंस समझौता",
+    "policy": "गोपनीयता नीति"
+  },
+  "navigation": {
+    "about": "कंपनी के बारे में",
+    "contact": "सहयोग",
+    "games": "खेल",
+    "home": "घर",
+    "language": "भाषा बदलें",
+    "news": "समाचार",
+    "other": "अन्य",
+    "profile": "प्रोफ़ाइल",
+    "promo": "प्रचार कोड",
+    "support": "सहायता"
+  },
+  "global": {
+    "welcome": "FAD GAMERS में आपका स्वागत है"
+  }
+}
