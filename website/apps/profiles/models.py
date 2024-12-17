@@ -112,6 +112,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(null=True, max_length=20)
     is_blocked = models.BooleanField(default=False)
     registration_date = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
     NOTIFICATION_CHOICES = [
         ('all', 'All Notifications'),
