@@ -1,8 +1,13 @@
 <script setup>
-import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 
-const userStore = useUserStore()
+const { userStore } = defineProps({
+  userStore: {
+    type: Object,
+    required: true
+  }
+});
+
 const router = useRouter()
 
 const removeToken = () => {
@@ -14,7 +19,7 @@ const removeToken = () => {
 <template>
   <div class="container mx-auto p-4">
     <div class="w-full bg-myblack-3 rounded-lg shadow-lg p-4">
-      <div class="text-3xl font-bold mb-4">Профиль пользователя</div>
+      <div class="text-3xl font-bold mb-4">{{ $t('profile.profileuser') }}</div>
       
       <div class="flex flex-col space-y-4">
         <div class="flex items-center">
@@ -23,22 +28,22 @@ const removeToken = () => {
         </div>
 
         <div class="flex items-center">
-          <label class="w-1/3" for="username">Никнейм:</label>
+          <label class="w-1/3" for="username">{{$t('profile.nickname')}}</label>
           <div class="w-2/3">{{ userStore.user.name }}</div>
         </div>
         
         <div class="flex items-center">
-          <label class="w-1/3" for="email">Email:</label>
+          <label class="w-1/3" for="email">{{ $t('profile.email') }}</label>
           <div class="w-2/3">{{ userStore.user.email }}</div>
         </div>
 
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
-          Редактировать профиль
+          {{$t('profile.edit_profile')}}
         </button>
         <button @click="router.push('/promo')" class="bg-mypurple-5 hover:bg-mypurple-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
           Активировать промокод
         </button>
-        <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Выйти</button>
+        <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">{{$t('auth.logout')}}</button>
       </div>
     </div>
   </div>
