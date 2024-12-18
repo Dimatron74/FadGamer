@@ -47,7 +47,7 @@ def signup(request):
         form.save()
     else:
         print("Ошибка формы:", form.errors)
-        message = 'error'
+        message = 'error form'
 
     return JsonResponse({'message': message})
 
