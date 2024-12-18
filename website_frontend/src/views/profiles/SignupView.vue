@@ -28,13 +28,9 @@
 
                         <input id="password_confirm" type="password" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.password_confirm" required>
                     </div>
-
-                    <template v-if="errors.length > 0">
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <p v-for="error in errors" :key="error">{{ error }}</p>
-                        </div>
-                    </template>
-
+                    <div v-if="errors.length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <p v-for="error in errors" :key="error">{{ error }}</p>
+                    </div>
                     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Зарегистироваться
                     </button>
@@ -60,7 +56,6 @@ export default {
             errors: [],
         }
     },
-
     methods: {
     submitForm() {
         this.errors = []
@@ -93,13 +88,15 @@ export default {
                 this.form.password_confirm = ''
 
                 this.$router.push('/login')
+            } else if (res.data.message === 'error form') {
+                this.errors.push('Ошибка формы')
             } else {
-                // this.toastStore.showToast(5000, 'Registration failed', 'bg-red-500')
-                console.log('error form')
+                this.errors.push('Неизвестная ошибка')
             }
             })
             .catch(err => {
-            console.log('error', err)
+                console.log('error', err)
+                this.errors.push('Неизвестная ошибка')
             })
         }
     }

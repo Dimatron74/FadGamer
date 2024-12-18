@@ -15,6 +15,9 @@
 
           <input id="password" type="password" class="border-2 bg-myblack-2 border-myblack-4 text-mywhite-3 rounded p-2 w-full focus:border-myblack-5 transition duration-300 outline-none" v-model="form.password" required>
         </div>
+        <div v-if= "errors.length > 0" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <p v-for="error in errors" :key="error">{{ error }}</p>
+        </div>
 
         <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Авторизоваться
@@ -76,7 +79,12 @@ export default {
                       axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
                     })
                     .catch(err => {
-                    console.log('error', err)
+                      if (err.response && err.response.data) {
+                        this.errors.push('Ошибка сервера')
+                      } else {
+                        this.errors.push('Ошибка сервера')
+                      }
+                      console.log('error в login', err)
                     })
 
                 await axios
