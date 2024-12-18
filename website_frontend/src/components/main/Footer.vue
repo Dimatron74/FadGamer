@@ -45,15 +45,14 @@
       <div class="text-3xl text-center pb-3" style="font-family: 'Roboto', sans-serif; font-weight: bold;">FAD GAMERS</div>
       <div class="mt-auto text-base text-gray-500">&copy; 2024 FadGamers. {{ $t('main.copyright') }}</div>
     </nav>
-    <button class="absolute right-4 bottom-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded" @click="switchLanguage">
-      {{ $t('navigation.language') }}
-    </button>
+    <IconChangeLang class="absolute right-4 bottom-4 font-bold py-2 px-4 rounded"/>
   </footer>
 </template>
 
 <script setup>
 import { watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
+import IconChangeLang from "@/components/icons/IconChangeLang.vue";
 
 // Иконки
 import IconVK from "@/components/icons/IconVK.vue"
