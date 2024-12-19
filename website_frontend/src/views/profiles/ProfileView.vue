@@ -1,5 +1,8 @@
 <script setup>
+import { ref } from 'vue'
+import axios from 'axios';
 import { useRouter } from 'vue-router'
+import ProfileSupportView from '@/views/support/ProfileSupportView.vue'
 
 const { userStore } = defineProps({
   userStore: {
@@ -14,6 +17,8 @@ const removeToken = () => {
     router.push('/')
     userStore.removeToken()
 }
+
+const showSupports = ref(false)
 </script>
 
 <template>
@@ -43,8 +48,13 @@ const removeToken = () => {
         <button @click="router.push('/promo')" class="bg-mypurple-5 hover:bg-mypurple-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
           Активировать промокод
         </button>
+        <button @click="showSupports = !showSupports" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Отобразить запросы в поддержку</button>
         <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">{{$t('auth.logout')}}</button>
       </div>
     </div>
+    <div v-if="showSupports">
+      <ProfileSupportView />
+    </div>
   </div>
 </template>
+
