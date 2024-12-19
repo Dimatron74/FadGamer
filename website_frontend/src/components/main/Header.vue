@@ -10,7 +10,7 @@
         <RouterLink to="/" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.home') }}</RouterLink>
         <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.games') }}</RouterLink>
         <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.news') }}</RouterLink>
-        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.support') }}</RouterLink>
+        <RouterLink to="/support" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.support') }}</RouterLink>
         <div @click="toggleDropdown" class="relative z-10">
           <span class="cursor-pointer hover:text-mywhite-5">{{ $t('navigation.other') }}</span>
           <div v-if="dropdownOpen" class="absolute bg-myblack-2 shadow-lg mt-2">
