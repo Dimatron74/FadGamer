@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Запросы поддержки</title>
+</head>
+<body>
+{% block content %}
+  <h1>Запросы поддержки</h1>
+  <ul>
+    {% for request in support_requests %}
+      <li>
+        <p>{{ request.question }}</p>
+        <p>Создано: {{ request.created_at }}</p>
+        <p>Отвечено: {% if request.answered %}Да{% else %}Нет{% endif %}</p>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+</body>
+</html>
