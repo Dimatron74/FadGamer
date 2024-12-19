@@ -48,7 +48,8 @@ const showSupports = ref(false)
         <button @click="router.push('/promo')" class="bg-mypurple-5 hover:bg-mypurple-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
           Активировать промокод
         </button>
-        <button @click="showSupports = !showSupports" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Отобразить запросы в поддержку</button>
+        <button @click="showSupports = !showSupports" class="bg-myred-5 hover:bg-myred-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Отобразить запросы в поддержку</button>
+        <div class="h-16"></div>
         <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">{{$t('auth.logout')}}</button>
       </div>
     </div>
