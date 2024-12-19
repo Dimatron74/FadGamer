@@ -2,6 +2,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    # Добавьте другие маршруты по мере необходимости
+    path('request/', views.support_request, name='support_request'),
 ]
