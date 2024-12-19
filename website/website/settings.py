@@ -228,6 +228,9 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
 ]
 
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_NAME = 'csrftoken'
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=30),
@@ -245,12 +248,13 @@ SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "apps.profiles.serializers.MyTokenObtainPairSerializer",
 }
 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated'
+        'rest_framework.permissions.IsAuthenticated',
     )
 }
 
