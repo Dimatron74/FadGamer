@@ -33,15 +33,16 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
 
+const router = useRouter()
 const userStore = useUserStore()
 const question = ref('');
 const text = ref('');
 const faqVisible = ref(false);
 const faqs = ref([
   { id: 1, question: 'Как выйти из аккаунта?', answer: 'В профиле кнопка "Выйти"' },
-  { id: 2, question: 'Вопрос 2', answer: 'Ответ 2' },
 ]);
 
 function sendRequest() {
@@ -49,7 +50,7 @@ function sendRequest() {
   axios.post('/support/request/', { question: question.value, text: text.value, user: userStore.user.id })
     .then(response => {
       console.log('Успех')
-      this.$router.push('/')
+      router.push('/')
     })
     .catch(error => {
       console.log('Ошибка', error)
