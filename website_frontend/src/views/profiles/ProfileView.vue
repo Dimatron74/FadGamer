@@ -23,10 +23,11 @@ const showSupports = ref(false)
 
 <template>
   <div class="container mx-auto p-4">
-    <div class="w-full bg-myblack-3 rounded-lg shadow-lg p-4">
-      <div class="text-3xl font-bold mb-4">{{ $t('profile.profileuser') }}</div>
+    <div class="w-full bg-myblack-3 rounded-lg shadow-lg p-4 relative overflow-hidden"
+         style="box-shadow: 0 0 10px rgba(140,0,35,0.3), 0 0 20px rgba(140,0,35,0.2), 0 0 40px rgba(140,0,35,0.1)">
+      <div class="text-3xl font-bold mb-4 relative z-10">{{ $t('profile.profileuser') }}</div>
       
-      <div class="flex flex-col space-y-4">
+      <div class="flex flex-col space-y-4 relative z-10">
         <div class="flex items-center">
           <label class="w-1/3" for="username">UID:</label>
           <div class="w-2/3">{{ userStore.user.uid }}</div>
@@ -58,4 +59,3 @@ const showSupports = ref(false)
     </div>
   </div>
 </template>
-
