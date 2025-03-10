@@ -21,14 +21,14 @@ def me(request):
         else:
             email = None
         return Response({
-            'id': user.id,
+            'id': user.uid,
             'email': email,
             'name': user.nickname,
             })
     else:
         return Response({'error': 'Токен авторизации не найден'})
 
-@api_view(['POST'])
+@api_view(['POST', 'OPTIONS'])
 @authentication_classes([])
 @permission_classes([])
 def signup(request):
@@ -52,4 +52,5 @@ def signup(request):
     return JsonResponse({'message': message})
 
 def get_csrf_token(request):
+    print(request)
     return JsonResponse({'csrf_token': get_token(request)})
