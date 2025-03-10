@@ -198,13 +198,13 @@ STATICFILES_FINDERS = [
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
+    "http://127.0.0.1:5174",
+    "http://localhost:5174",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -240,7 +240,7 @@ SIMPLE_JWT = {
     'SIGNING_KEY': SECRET_KEY,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
-    'USER_ID_FIELD': 'id',
+    'USER_ID_FIELD': 'uid',
     'USER_ID_CLAIM': 'user_id',
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(days=30),

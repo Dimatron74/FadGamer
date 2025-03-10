@@ -21,7 +21,7 @@ def me(request):
         else:
             email = None
         return Response({
-            'id': user.uid,
+            'uid': user.uid,
             'email': email,
             'name': user.nickname,
             })

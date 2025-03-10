@@ -28,8 +28,8 @@ const showSupports = ref(false)
       
       <div class="flex flex-col space-y-4">
         <div class="flex items-center">
-          <label class="w-1/3" for="username">UUID:</label>
-          <div class="w-2/3">{{ userStore.user.id }}</div>
+          <label class="w-1/3" for="username">UID:</label>
+          <div class="w-2/3">{{ userStore.user.uid }}</div>
         </div>
 
         <div class="flex items-center">
