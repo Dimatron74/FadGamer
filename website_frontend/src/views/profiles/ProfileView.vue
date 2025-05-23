@@ -1,113 +1,146 @@
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios';
+import axios from 'axios'
 import { useRouter } from 'vue-router'
 import ProfileSupportView from '@/views/support/ProfileSupportView.vue'
 
-const { userStore } = defineProps({
+const router = useRouter()
+
+// Пользователь из стора
+const props = defineProps({
   userStore: {
     type: Object,
     required: true
   }
-});
+})
 
-const router = useRouter()
+// Активная вкладка
+const activeTab = ref('account')
 
+// Выход из аккаунта
 const removeToken = () => {
-    router.push('/')
-    userStore.removeToken()
+  props.userStore.removeToken()
+  router.push('/')
 }
 
-const showSupports = ref(false)
+// Данные для отображения
+const tabs = [
+  { id: 'account', label: 'Учётная запись' },
+  { id: 'games', label: 'Все игры' },
+  { id: 'promo', label: 'Активировать промокод' },
+  { id: 'support', label: 'Запросы в техподдержку' }
+]
 </script>
 
 <template>
-  <div class="container mx-auto p-4 max-w-4xl">
-    <div class="text-3xl font-bold mb-6 relative z-10">{{ $t('profile.profileuser') }}</div>
-    
-    <!-- Grid контейнер для карточек -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Карточка UID -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">UID</h3>
-          <p class="text-white">{{ userStore.user.uid }}</p>
+  <div class="container mx-auto p-4 max-w-6xl">
+    <h1 class="text-3xl font-bold mb-6 text-white relative z-10">Профиль</h1>
+
+    <!-- Основной Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Карточка профиля (фиксированная) -->
+      <div
+        class="
+          lg:col-span-1
+          bg-myblack-3 rounded-lg shadow-xl p-5 top-24 self-start
+          border border-myblack-2
+        "
+      >
+        <!-- Фото профиля -->
+        <div class="flex justify-center mb-4">
+          <div class="w-20 h-20 rounded-full overflow-hidden bg-myblack-5 flex items-center justify-center">
+            <span class="text-mywhite-1 text-2xl font-semibold"> {{ userStore.user.name?.charAt(0) || '?' }} </span>
+          </div>
         </div>
-        <div class="mt-auto flex justify-end">
-          <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded">
-            {{ $t('profile.uidcopy') }}
+
+        <!-- Никнейм и UID -->
+        <div class="text-center mb-6">
+          <h2 class="text-xl font-bold text-mywhite-5">{{ userStore.user.name }}</h2>
+          <p class="text-sm text-mywhite-2 truncate">{{ userStore.user.uid }}</p>
+        </div>
+
+        <!-- Меню навигации по профилю -->
+        <ul class="space-y-2">
+          <li v-for="tab in tabs" :key="tab.id">
+            <button
+              @click="activeTab = tab.id"
+              :class="[
+                'w-full text-left px-4 py-2 rounded-md transition-all',
+                activeTab === tab.id
+                  ? 'bg-mypurple-4 text-mywhite-5 font-medium'
+                  : 'hover:bg-myblack-2 text-mywhite-3'
+              ]"
+            >
+              {{ tab.label }}
+            </button>
+          </li>
+        </ul>
+
+        <!-- Выход -->
+        <div class="mt-6 pt-4 border-t border-myblack-1">
+          <button
+            @click="removeToken"
+            class="w-full bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded"
+          >
+            Выйти
           </button>
         </div>
       </div>
 
-      <!-- Карточка Никнейм -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">{{ $t('profile.nickname') }}</h3>
-          <p class="text-white">{{ userStore.user.name }}</p>
+      <!-- Контентная часть -->
+      <div class="lg:col-span-3 space-y-6">
+        <!-- Учётная запись -->
+        <div v-if="activeTab === 'account'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Учётная запись</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-mywhite-2 text-sm mb-1">Email</label>
+              <div class="flex items-center justify-between">
+                <p class="text-mywhite-4">{{ userStore.user.email }}</p>
+                <button class="text-mypurple-5 hover:text-mypurple-2 text-sm underline">Изменить</button>
+              </div>
+            </div>
+            <hr class="border-myblack-2" />
+            <div>
+              <label class="block text-mywhite-2 text-sm mb-1">Пароль</label>
+              <div class="flex items-center justify-between">
+                <p class="text-mywhite-4">•••••••••••</p>
+                <button class="text-mypurple-4 hover:text-mypurple-2 text-sm">Изменить</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full">
-          {{ $t('profile.edit') }}
-        </button>
-      </div>
 
-      <!-- Карточка Email -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">{{ $t('profile.email') }}</h3>
-          <p class="text-white">{{ userStore.user.email }}</p>
+        <!-- Игры -->
+        <div v-if="activeTab === 'games'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Все игры</h2>
+          <p class="text-mywhite-3">Информация о ваших играх пока недоступна.</p>
         </div>
-        <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full">
-          {{ $t('profile.change') }}
-        </button>
-      </div>
 
-      <!-- Карточка Промокод -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">Промокод</h3>
-          <p class="text-white">Активировать бонус</p>
+        <!-- Промокод -->
+        <div v-if="activeTab === 'promo'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Активировать промокод</h2>
+          <form class="space-y-4">
+            <input
+              type="text"
+              placeholder="Введите промокод"
+              class="w-full bg-myblack-2 text-mywhite-4 placeholder-mywhite-2 border-none rounded-md px-4 py-2 focus:ring-2 focus:ring-mypurple-4"
+            />
+            <button
+              type="submit"
+              class="w-full bg-mypurple-4 hover:bg-mypurple-3 text-white font-bold py-2 px-4 rounded"
+            >
+              Активировать
+            </button>
+          </form>
         </div>
-        <button 
-          @click="router.push('/promo')"
-          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
-        >
-          Активировать
-        </button>
-      </div>
 
-      <!-- Карточка Поддержка -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">Поддержка</h3>
-          <p class="text-white">Мои запросы</p>
+        <!-- Техподдержка -->
+        <div v-if="activeTab === 'support'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Запросы в техподдержку</h2>
+          <p class="text-mywhite-3">Список запросов будет доступен здесь.</p>
         </div>
-        <button 
-          @click="showSupports = !showSupports"
-          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
-        >
-          Показать
-        </button>
       </div>
-
-      <!-- Карточка Выход -->
-      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
-        <div>
-          <h3 class="text-lg font-semibold text-gray-300 mb-3">Аккаунт</h3>
-          <p class="text-white">Завершить сессию</p>
-        </div>
-        <button 
-          @click="removeToken()"
-          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
-        >
-          {{ $t('auth.logout') }}
-        </button>
-      </div>
-    </div>
-
-    <!-- Отображение поддержки -->
-    <div v-if="showSupports" class="mt-6">
-      <ProfileSupportView />
     </div>
   </div>
 </template>
