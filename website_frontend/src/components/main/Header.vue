@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-myblack-2 text-mywhite-3 body-font sticky" style="font-family: 'Roboto', sans-serif; font-weight: bold;">
+  <header class="bg-myblack-2 text-mywhite-3 body-font sticky border-b-4 border-myblack-3 border-opacity-50" style="font-family: 'Roboto', sans-serif; font-weight: bold;">
     <div class="flex p-6 flex-col md:flex-row items-center h-20">
       <div class="flex items-center justify-start">
         <RouterLink to="/" @click="scrollToTop">
