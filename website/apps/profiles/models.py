@@ -1,7 +1,6 @@
-import uuid
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group
 
 
 
@@ -9,7 +8,6 @@ class UserManager(BaseUserManager):
     def create_user(self, nickname, password=None, **extra_fields):
         if not nickname:
             raise ValueError('The Nickname field must be set')
-        nickname = self.normalize_email(nickname)
         user = self.model(nickname=nickname, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -18,30 +16,35 @@ class UserManager(BaseUserManager):
     def create_superuser(self, nickname, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         if extra_fields.get('is_staff') is not True:
             raise ValueError('Superuser must have is_staff=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-
         return self.create_user(nickname, password, **extra_fields)
 
     def get_by_natural_key(self, nickname):
         return self.get(nickname=nickname)
 
 
-
 class Role(models.Model):
-    name = models.CharField(max_length=50, unique=True, primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True, null=True)
+    group = models.OneToOneField(Group, on_delete=models.CASCADE, related_name='role', null=True, blank=True)
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        # Создаём или обновляем связанную группу
+        if not self.group:
+            self.group, _ = Group.objects.get_or_create(name=self.name)
+        super().save(*args, **kwargs)
+
     @classmethod
     def get_default_role(cls):
-        return cls.objects.get_or_create(name='user')[0]
-    
+        role, created = cls.objects.get_or_create(name='user', defaults={'description': 'Default user role'})
+        return role
+
 class Email(models.Model):
     email = models.EmailField(unique=True)
 
@@ -62,9 +65,8 @@ class UserEmail(models.Model):
     def __str__(self):
         return f'{self.user.nickname} - {self.email.email}'
 
-
 class Service(models.Model):
-    name = models.CharField(unique=True)
+    name = models.CharField(unique=True, max_length=255)
 
     def __str__(self):
         return self.name
@@ -82,7 +84,6 @@ class UserService(models.Model):
     def __str__(self):
         return f'{self.user.nickname} - {self.service.name}'
 
-
 class AccountLock(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="locked_accounts")
     blocked_by = models.ForeignKey("User", on_delete=models.CASCADE, related_name="blocked_accounts", null=True, blank=True)
@@ -92,10 +93,22 @@ class AccountLock(models.Model):
     is_unblocked = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Аккаунт {self.user.nickname} был заблокирован по причине: {self.reason}'
+        return f'Аккаунт {self.user.nickname} заблокирован по причине: {self.reason}'
 
+class UIDCounter(models.Model):
+    server_prefix = models.CharField(max_length=2, unique=True)
+    sequence_number = models.BigIntegerField(default=0)
 
+    @classmethod
+    def get_next_uid(cls, server_prefix="1"):
+        counter, created = cls.objects.get_or_create(server_prefix=server_prefix, defaults={'sequence_number': 0})
+        counter.sequence_number += 1
+        counter.save()
+        return counter.sequence_number
 
+def generate_uid(server_prefix="1"):
+    sequence = UIDCounter.get_next_uid(server_prefix)
+    return f"{server_prefix}{sequence:08d}"
 
 
 
@@ -103,8 +116,7 @@ class AccountLock(models.Model):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    roles = models.ManyToManyField(Role, related_name='users', blank=True)
+    uid = models.CharField(max_length=10, primary_key=True, unique=True, editable=False)
     nickname = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
@@ -126,23 +138,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'nickname'
     REQUIRED_FIELDS = []
-    
-    def get_current_email(self):
-        return self.emails.filter(is_active=True).latest('binding_date')
-
-    def set_password(self, password):
-        self.password = make_password(password)
-
-    def check_password(self, password):
-        return check_password(password, self.password)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Сначала сохраняем объект self в базе данных
-        # using = kwargs.get('using')
-        # print(using)
-        # default_role = Role.objects.using(using).get_or_create(name='user')[0]
-        default_role = Role.objects.get_or_create(name='user')[0]
-        if not self.roles.exists():
-            self.roles.add(default_role)
+        if not self.uid:  # Генерируем UID только при создании
+            self.uid = generate_uid()
+        super().save(*args, **kwargs)
+        # Назначаем роль по умолчанию
+        default_role = Role.get_default_role()
+        if not self.groups.filter(name=default_role.name).exists():
+            self.groups.add(default_role.group)
 
+    def __str__(self):
+        return f"{self.nickname} ({self.uid})"
 

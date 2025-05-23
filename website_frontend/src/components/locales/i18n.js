@@ -7,8 +7,8 @@ import hi from './hi.json';
 const messages = { en, ru, cn, hi };
 
 const i18n = createI18n({
-  locale: 'ru', // язык по умолчанию
-  fallbackLocale: 'en', // язык на случай отсутствия перевода
+  locale: 'en', // язык по умолчанию
+  fallbackLocale: 'ru', // язык на случай отсутствия перевода
   legacy: false,
   globalInjection: true,
   messages,

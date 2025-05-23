@@ -8,7 +8,7 @@ export const useUserStore = defineStore({
     state: () => ({
         user: {
             isAuthenticated: false,
-            id: null,
+            uid: null,
             name: null,
             email: null,
             refresh: null,
@@ -21,7 +21,7 @@ export const useUserStore = defineStore({
             if (localStorage.getItem('user.access')) {
                 this.user.access = localStorage.getItem('user.access')
                 this.user.isAuthenticated = true
-                this.user.id = localStorage.getItem('user.id')
+                this.user.uid = localStorage.getItem('user.uid')
                 this.user.email = localStorage.getItem('user.email')   
                 this.user.name = localStorage.getItem('user.name')
                 this.user.refresh = localStorage.getItem('user.refresh')  
@@ -47,7 +47,7 @@ export const useUserStore = defineStore({
             this.user.access = null
             this.user.refresh = null
             this.user.isAuthenticated = false
-            this.user.id = null
+            this.user.uid = null
             this.user.email = null
             this.user.name = null
 
@@ -65,11 +65,11 @@ export const useUserStore = defineStore({
         setUserInfo(user) {
             console.log('setUserInfo', user)
 
-            this.user.id = user.id
+            this.user.uid = user.uid
             this.user.email = user.email
             this.user.name = user.name
 
-            localStorage.setItem('user.id', this.user.id)
+            localStorage.setItem('user.uid', this.user.uid)
             localStorage.setItem('user.email', this.user.email)
             localStorage.setItem('user.name', this.user.name)
 

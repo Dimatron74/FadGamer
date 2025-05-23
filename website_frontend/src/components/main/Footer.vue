@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-myblack-2 py-6 h-60 relative">
+  <footer class="bg-myblack-2 py-6 h-60 relative border-t-4 border-myblack-3 border-opacity-50">
     <nav class="container mx-auto flex flex-col justify-center items-center text-mywhite-1">
       <ul class="flex items-center justify-center gap-5 text-sm pb-5">
         <li>
@@ -43,7 +43,7 @@
         </li>
       </ul>
       <div class="text-3xl text-center pb-3" style="font-family: 'Roboto', sans-serif; font-weight: bold;">FAD GAMERS</div>
-      <div class="mt-auto text-base text-gray-500">&copy; 2024 FadGamers. {{ $t('main.copyright') }}</div>
+      <div class="mt-auto text-base text-gray-500">&copy; 2025 FadGamers. {{ $t('main.copyright') }}</div>
     </nav>
     <IconChangeLang class="absolute right-4 bottom-4 font-bold py-2 px-4 rounded"/>
   </footer>

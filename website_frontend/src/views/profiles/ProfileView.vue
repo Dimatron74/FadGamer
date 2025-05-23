@@ -22,40 +22,92 @@ const showSupports = ref(false)
 </script>
 
 <template>
-  <div class="container mx-auto p-4">
-    <div class="w-full bg-myblack-3 rounded-lg shadow-lg p-4">
-      <div class="text-3xl font-bold mb-4">{{ $t('profile.profileuser') }}</div>
-      
-      <div class="flex flex-col space-y-4">
-        <div class="flex items-center">
-          <label class="w-1/3" for="username">UUID:</label>
-          <div class="w-2/3">{{ userStore.user.id }}</div>
+  <div class="container mx-auto p-4 max-w-4xl">
+    <div class="text-3xl font-bold mb-6 relative z-10">{{ $t('profile.profileuser') }}</div>
+    
+    <!-- Grid контейнер для карточек -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Карточка UID -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">UID</h3>
+          <p class="text-white">{{ userStore.user.uid }}</p>
         </div>
+        <div class="mt-auto flex justify-end">
+          <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded">
+            {{ $t('profile.uidcopy') }}
+          </button>
+        </div>
+      </div>
 
-        <div class="flex items-center">
-          <label class="w-1/3" for="username">{{$t('profile.nickname')}}</label>
-          <div class="w-2/3">{{ userStore.user.name }}</div>
+      <!-- Карточка Никнейм -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">{{ $t('profile.nickname') }}</h3>
+          <p class="text-white">{{ userStore.user.name }}</p>
         </div>
-        
-        <div class="flex items-center">
-          <label class="w-1/3" for="email">{{ $t('profile.email') }}</label>
-          <div class="w-2/3">{{ userStore.user.email }}</div>
-        </div>
+        <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full">
+          {{ $t('profile.edit') }}
+        </button>
+      </div>
 
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
-          {{$t('profile.edit_profile')}}
+      <!-- Карточка Email -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">{{ $t('profile.email') }}</h3>
+          <p class="text-white">{{ userStore.user.email }}</p>
+        </div>
+        <button class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full">
+          {{ $t('profile.change') }}
         </button>
-        <button @click="router.push('/promo')" class="bg-mypurple-5 hover:bg-mypurple-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">
-          Активировать промокод
+      </div>
+
+      <!-- Карточка Промокод -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">Промокод</h3>
+          <p class="text-white">Активировать бонус</p>
+        </div>
+        <button 
+          @click="router.push('/promo')"
+          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+        >
+          Активировать
         </button>
-        <button @click="showSupports = !showSupports" class="bg-myred-5 hover:bg-myred-2 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">Отобразить запросы в поддержку</button>
-        <div class="h-16"></div>
-        <button @click="removeToken()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-4 max-w-fit">{{$t('auth.logout')}}</button>
+      </div>
+
+      <!-- Карточка Поддержка -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">Поддержка</h3>
+          <p class="text-white">Мои запросы</p>
+        </div>
+        <button 
+          @click="showSupports = !showSupports"
+          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+        >
+          Показать
+        </button>
+      </div>
+
+      <!-- Карточка Выход -->
+      <div class="bg-myblack-3 rounded-lg shadow-lg p-5 flex flex-col justify-between h-48">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-300 mb-3">Аккаунт</h3>
+          <p class="text-white">Завершить сессию</p>
+        </div>
+        <button 
+          @click="removeToken()"
+          class="bg-myred-2 hover:bg-myred-1 text-white font-bold py-2 px-4 rounded mt-4 w-full"
+        >
+          {{ $t('auth.logout') }}
+        </button>
       </div>
     </div>
-    <div v-if="showSupports">
+
+    <!-- Отображение поддержки -->
+    <div v-if="showSupports" class="mt-6">
       <ProfileSupportView />
     </div>
   </div>
 </template>
-
