@@ -31,6 +31,7 @@ urlpatterns = [
     path('admin_panel/', include('apps.admin_panel.urls')),
     path('contact/', include('apps.contact.urls')),
     path('profiles/', include('apps.profiles.urls')),
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
 
 if settings.DEBUG:

@@ -29,6 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+NPM_BIN_PATH = r"npm.cmd" # Для запуска npm в django
 
 # Application definition
 
@@ -64,6 +65,9 @@ INSTALLED_APPS = [
     'wagtail',
     'taggit',
     'modelcluster',
+    'tailwind',
+    'theme',
+    'django_browser_reload'
 ]
 
 MIDDLEWARE = [
@@ -77,6 +81,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'website.urls'
@@ -270,3 +275,5 @@ ANONYMOUS_USER_ID = -1
 
 WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
 WAGTAIL_SITE_NAME = "FadGamers"
+
+TAILWIND_APP_NAME = 'theme'
