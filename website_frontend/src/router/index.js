@@ -9,6 +9,10 @@ import SupportView from '@/views/support/SupportView.vue'
 import AdminView from '@/views/admin/AdminView.vue'
 import AdminSupportView from '@/views/admin/AdminSupportView.vue'
 import AdminHomeView from '@/views/admin/AdminHomeView.vue'
+import AdminSupportDetailView from '@/views/admin/AdminSupportDetailView.vue'
+import AdminPromoCodesCreateView from '@/views/admin/AdminPromoCodesCreateView.vue'
+import PromoCodeModal from '@/components/admin/PromoCodeModal.vue'
+import AdminPromoCodesView from '@/views/admin/AdminPromoCodesView.vue'
 import { noAuthMiddleware, authMiddleware } from './middleware/authMiddleware'
 import { adminMiddleware } from './middleware/adminMiddleware'
 
@@ -95,11 +99,6 @@ const router = createRouter({
           component: AdminHomeView
         },
         {
-          path: 'promocodes',
-          name: 'admin-promocodes',
-          component: AdminHomeView
-        },
-        {
           path: 'stats/general',
           name: 'admin-stats-general',
           component: AdminHomeView
@@ -119,6 +118,26 @@ const router = createRouter({
           name: 'admin-settings',
           component: AdminHomeView
         },
+        {
+          path: 'support/:id',
+          name: 'admin-support-detail',
+          component: AdminSupportDetailView
+        },
+        {
+          path: 'promocodes',
+          name: 'admin-promocodes',
+          component: AdminPromoCodesView
+        },
+        {
+          path: 'promocodes/create',
+          name: 'admin-promocodes-create',
+          component: AdminPromoCodesCreateView
+        },
+        {
+          path: 'promocodes/:code',
+          name: 'admin-promocode-detail',
+          component: PromoCodeModal
+        }
       ]
     }
   ],
