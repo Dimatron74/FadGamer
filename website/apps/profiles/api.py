@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 from django.middleware.csrf import get_token
 
 
@@ -13,20 +14,33 @@ from django.middleware.csrf import get_token
 @permission_classes([])
 def me(request):
     authentication = JWTAuthentication()
-    user, auth = authentication.authenticate(request)
-    if user:
+    try:
+        user_auth_tuple = authentication.authenticate(request)
+
+        if user_auth_tuple is None:
+            return Response({'error': 'Токен отсутствует или недействителен'}, status=401)
+
+        user, auth = user_auth_tuple
+
+        if not user.is_authenticated:
+            return Response({'error': 'Пользователь не аутентифицирован'}, status=401)
+
         user_email = user.useremail_set.filter(is_active=True).first()
-        if user_email:
-            email = user_email.email.email
-        else:
-            email = None
+        email = user_email.email.email if user_email else None
+
         return Response({
             'uid': user.uid,
             'email': email,
             'name': user.nickname,
-            })
-    else:
-        return Response({'error': 'Токен авторизации не найден'})
+            'is_staff': user.is_staff
+        })
+
+    except AuthenticationFailed as e:
+        return Response({'error': str(e)}, status=401)
+
+    except Exception as e:
+        print("Unexpected error:", e)
+        return Response({'error': 'Ошибка сервера при обработке запроса'}, status=500)
 
 @api_view(['POST', 'OPTIONS'])
 @authentication_classes([])

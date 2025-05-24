@@ -10,35 +10,62 @@
   const userStore = useUserStore()
   const userAccess = ref(userStore.user.access)
 
-  // components: { Header, Footer, RouterView }
 
   watchEffect(() => {
-    const token = userAccess.value
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
-    } else {
-      axios.defaults.headers.common['Authorization'] = ''
-    }
-    console.log('Ватч вызов', token)
+      const token = userAccess.value
+
+      if (token) {
+          axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+      } else {
+          axios.defaults.headers.common['Authorization'] = ''
+      }
+
+      console.log('Ватч вызов', token)
+
+      // ⬇ Запрашиваем данные пользователя ТОЛЬКО если есть токен
+      if (token && userStore.user.isAuthenticated) {
+          userStore.fetchUserInfo().catch(e => {
+              console.warn("Ошибка при обновлении данных пользователя", e)
+          })
+      }
   })
 
-  onMounted(() => {
-    userStore.initStore()
+  onMounted(async () => {
+    try {
+        await userStore.initStore()
+    } catch (e) {
+        console.warn("Ошибка при инициализации токена", e)
+    }
+
     axios.get('profiles/api/csrf-token/')
-      .then(response => {
-        VueCookies.set('csrftoken', response.data.csrf_token);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  })
+        .then(response => {
+            VueCookies.set('csrftoken', response.data.csrf_token)
+        })
+        .catch(error => {
+            console.error(error)
+        })
+
+    if (userStore.user.isAuthenticated) {
+        try {
+            await userStore.fetchUserInfo()
+        } catch (e) {
+            console.warn("Ошибка при загрузке данных пользователя", e)
+        }
+    }
+
+    setInterval(async () => {
+        if (userStore.user.isAuthenticated) {
+            await userStore.fetchUserInfo()
+        }
+    }, 5 * 60 * 1000) // каждые 5 минут
+})
 </script>
 
 
 
 <template>
   <Header :user-store="userStore"/>
-  <main class="bg-myblack-2 text-mywhite-5 min-h-screen flex flex-col justify-center" style="font-family: 'Roboto', sans-serif; font-weight: 400;" id="top">
+  <main class="bg-myblack-2 text-mywhite-5 min-h-screen flex flex-col justify-center pt-20" style="font-family: 'Roboto', sans-serif; font-weight: 400;" id="top">
     <RouterView :user-store="userStore" />
   </main>
   <Footer :user-store="userStore" style="font-family: 'Roboto', sans-serif; font-weight: 400;"/>

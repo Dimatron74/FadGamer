@@ -58,6 +58,7 @@ export default {
     methods: {
         async submitForm() {
             this.errors = []
+
             if (this.form.email === '') {
                 this.errors.push('Email is required')
             }
@@ -68,39 +69,33 @@ export default {
 
             if (this.errors.length === 0) {
                 console.log('Форма ', this.form)
-                await axios
-                    .post('/profiles/login/', this.form)
-                    .then(res => {
-                      console.log("Токен из апи", res.data)
-                      const refreshToken = res.data.refresh;
-                      const accessToken = res.data.access;
-                      // console.log(refreshToken, accessToken);
-                      this.userStore.setToken({ access: accessToken, refresh: refreshToken });
-                      axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken;
-                    })
-                    .catch(err => {
-                      if (err.response && err.response.data) {
-                        this.errors.push('Ошибка сервера')
-                      } else {
-                        this.errors.push('Ошибка сервера')
-                      }
-                      console.log('error в login', err)
-                    })
 
-                await axios
-                    .get('/profiles/me/')
-                    .then(res => {
-                        console.log('Пользователь', res.data)
-                        if (this.userStore.user.isAuthenticated) {
-                          this.userStore.setUserInfo(res.data)
-                          this.$router.push('/')
-                        }
-                    })
-                    .catch(err => {
-                    console.log('error', err)
-                    })
+                try {
+                    const res = await axios.post('/profiles/login/', this.form)
+
+                    const refreshToken = res.data.refresh
+                    const accessToken = res.data.access
+
+                    this.userStore.setToken({ access: accessToken, refresh: refreshToken })
+
+                    // ⬇ Установка заголовка сразу после получения токена
+                    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
+                    console.log('Authorization header:', axios.defaults.headers.common['Authorization'])
+
+                    // ⬇ Добавляем небольшую задержку, чтобы гарантировать обновление
+                    await new Promise(resolve => setTimeout(resolve, 50))
+
+                    // Теперь /me/ будет с правильным заголовком
+                    const userRes = await axios.get('/profiles/me/')
+                    this.userStore.setUserInfo(userRes.data)
+                    this.$router.push('/')
+
+                } catch (err) {
+                    this.errors.push('Ошибка сервера')
+                    console.error('Ошибка при входе:', err)
                 }
             }
+        }
     }
 }
 </script>

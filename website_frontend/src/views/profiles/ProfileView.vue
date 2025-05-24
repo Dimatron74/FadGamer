@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 import ProfileSupportView from '@/views/support/ProfileSupportView.vue'
@@ -23,13 +23,24 @@ const removeToken = () => {
   router.push('/')
 }
 
-// Данные для отображения
-const tabs = [
+// Все вкладки
+const allTabs = [
   { id: 'account', label: 'Учётная запись' },
   { id: 'games', label: 'Все игры' },
   { id: 'promo', label: 'Активировать промокод' },
-  { id: 'support', label: 'Запросы в техподдержку' }
+  { id: 'support', label: 'Запросы в техподдержку' },
+  { id: 'admin', label: 'Админ панель' }
 ]
+
+// Фильтруем вкладки: показываем "админ" только для is_staff
+const tabs = computed(() => {
+  return allTabs.filter(tab => {
+    if (tab.id === 'admin') {
+      return props.userStore.user.is_staff === true
+    }
+    return true
+  })
+})
 </script>
 
 <template>
@@ -139,6 +150,12 @@ const tabs = [
         <div v-if="activeTab === 'support'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
           <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Запросы в техподдержку</h2>
           <p class="text-mywhite-3">Список запросов будет доступен здесь.</p>
+        </div>
+
+        <!-- Админ панель -->
+        <div v-if="activeTab === 'admin' && userStore.user.is_staff" class="bg-myblack-3 rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Админ панель</h2>
+          <RouterLink to="/admin" class="hover:text-mywhite-5">Войти</RouterLink>
         </div>
       </div>
     </div>
