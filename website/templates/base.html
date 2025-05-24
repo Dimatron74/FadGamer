@@ -1,0 +1,39 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="ru" class="bg-myblack-1 text-mywhite-5">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Fadgamers{% endblock %}</title>
+    {% load static %}
+    {% tailwind_css %}
+    <link rel="stylesheet" href="{% static 'css/tailwind.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="bg-myblack-1 text-mywhite-5">
+
+    <!-- Header -->
+    <header class="bg-myblack-2 border-b border-myblack-4 py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Техподдержка | Game Studio</h1>
+            <nav>
+                <a href="/" class="mr-4 hover:text-mypurple-4">Главная</a>
+                <a href="/support/" class="hover:text-mypurple-4">Поддержка</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-myblack-2 border-t border-myblack-4 py-4 px-6 mt-auto">
+        <div class="container mx-auto text-center text-sm text-mywhite-3">
+            &copy; 2025 Game Studio. Все права защищены.
+        </div>
+    </footer>
+
+</body>
+</html>

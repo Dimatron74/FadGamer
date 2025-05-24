@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Панель поддержки{% endblock %}
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <!-- Список запросов -->
+    <div class="md:col-span-1 bg-myblack-3 p-4 rounded shadow">
+        <h2 class="text-lg font-semibold mb-4">Все запросы</h2>
+        <ul class="space-y-2">
+            {% for chat in chats %}
+                <li>
+                    <a href="?chat_id={{ chat.id }}" class="block p-2 hover:bg-myblack-2 rounded {% if current_chat and current_chat.id == chat.id %}bg-myblack-2{% endif %}">
+                        <p class="font-medium">{{ chat.title }}</p>
+                        <p class="text-sm text-mywhite-2">{{ chat.status|title }} · {{ chat.updated_at|date:"d.m.Y H:i" }}</p>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Чат -->
+    <div class="md:col-span-3 bg-myblack-3 p-4 rounded shadow">
+        {% if current_chat %}
+            <h2 class="text-xl font-semibold mb-4">{{ current_chat.title }}</h2>
+            <div class="space-y-4 mb-6">
+                {% for message in current_chat.messages.all %}
+                    <div class="p-3 rounded {% if message.author == request.user %}bg-mypurple-4 text-white{% else %}bg-myblack-2 text-mywhite-4{% endif %}">
+                        <strong>{{ message.author }}</strong>: {{ message.text }}
+                        {% if message.file %}
+                            <div class="mt-2">
+                                <a :href="msg.file" target="_blank">Скачать файл</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="chat_id" value="{{ current_chat.id }}">
+                <textarea name="text" rows="3" class="w-full p-2 bg-myblack-2 text-mywhite-5 rounded mb-2" placeholder="Введите сообщение..."></textarea>
+                <input type="file" name="file" class="mb-2">
+                <button type="submit" class="bg-mypurple-4 hover:bg-mypurple-3 text-white px-4 py-2 rounded">Отправить</button>
+            </form>
+        {% else %}
+            <p class="text-mywhite-3">Выберите запрос из списка</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -19,11 +19,8 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-from wagtail.admin import urls as wagtailadmin_urls
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('cms/', include(wagtailadmin_urls)),
     path('', include('apps.main.urls')),
     path('games/', include('apps.games.urls')),
     path('news/', include('apps.news.urls')),
