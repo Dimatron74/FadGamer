@@ -1,6 +1,6 @@
 <template>
   <div class="bg-myblack-2 text-mywhite-3 p-6 min-h-screen">
-    <RouterLink to="/admin/support" class="inline-flex items-center text-mywhite-3 hover:text-mypurple-5 mb-6 transition">
+    <RouterLink to="/profile/support" class="inline-flex items-center text-mywhite-3 hover:text-mypurple-5 mb-6 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
           d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H17a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z"
@@ -19,23 +19,14 @@
         <h1 class="text-3xl font-bold text-mywhite-5">{{ ticket.title }}</h1>
 
         <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
-          <span class="font-medium">Автор: {{ ticket.user?.nickname || '—' }}</span>
-          <span class="text-mywhite-2">UID: {{ ticket.user?.uid || '—' }}</span>
-          
+          <span class="font-medium">Сервис: {{ ticket.service?.name || '—' }}</span>
+          <span class="text-mywhite-2">Категория: {{ ticket.category?.name || '—' }}</span>
+
           <!-- Статус -->
           <span :class="statusClass()" class="px-3 py-1 rounded-full text-xs font-medium ml-auto">
             {{ statusText() }}
           </span>
           <span class="text-mywhite-1">ID: {{ ticket.id }}</span>
-
-          <!-- Кнопка только для закрытия -->
-          <button
-            v-if="ticket.status !== 'closed'"
-            @click="changeStatus('closed')"
-            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded text-sm"
-          >
-            Закрыть запрос
-          </button>
         </div>
 
         <div class="border-t border-myblack-4 mt-6"></div>
@@ -53,7 +44,7 @@
             <div class="text-xs text-mywhite-1 pl-6 mt-1">{{ formatTime(msg.created_at) }}</div>
           </div>
 
-          <!-- Сообщение от пользователя -->
+          <!-- Сообщение от пользователя или бота -->
           <div v-else-if="msg.sender_type === 'user'" class="w-full md:w-8/12 self-start">
             <div class="bg-myblack-3 rounded-lg p-4 mb-1">
               <p class="text-mywhite-2 whitespace-pre-line">{{ msg.text }}</p>
@@ -61,12 +52,9 @@
             <div class="text-xs text-mywhite-1 pl-4 mt-1">{{ formatTime(msg.created_at) }}</div>
           </div>
 
-          <!-- Сообщение от сотрудника или бота -->
+          <!-- Сообщение от сотрудника -->
           <div v-else class="w-full md:w-8/12 self-end">
             <!-- Автор -->
-            <div v-if="msg.author" class="text-right text-xs text-mywhite-1 pr-2 mb-1">
-              {{ msg.author.nickname }}
-            </div>
             <div v-if="msg.sender_type == 'ai'" class="text-right text-xs text-mywhite-1 pr-2 mb-1">
               Искусственный Интеллект Qwen3
             </div>
@@ -79,24 +67,16 @@
               <p class="whitespace-pre-line">{{ msg.text }}</p>
             </div>
 
-            <!-- Время и действия -->
+            <!-- Время -->
             <div class="text-xs text-mywhite-1 text-right pr-2 mt-1">
-              <span>{{ formatTime(msg.created_at) }}</span>
-              <span v-if="msg.is_deleted" class="ml-4 italic">[удалено]</span>
-              <button
-                v-else
-                @click="deleteMessage(msg.id)"
-                class="ml-4 text-red-400 hover:text-red-300 transition-colors"
-              >
-                Удалить
-              </button>
+              {{ formatTime(msg.created_at) }}
             </div>
           </div>
         </div>
       </div>
 
       <!-- Форма ответа -->
-      <form @submit.prevent="sendMessage" class="mt-10 max-w-4xl mx-auto">
+      <form @submit.prevent="sendMessage" class="mt-10 max-w-4xl mx-auto" v-if="ticket.status !== 'closed'">
         <div class="flex items-center gap-2">
           <textarea
             v-model="newMessage"
@@ -112,16 +92,21 @@
           </button>
         </div>
       </form>
+
+      <div v-else class="mt-10 text-center text-mywhite-2">
+        Этот тикет закрыт. Вы не можете отправлять новые сообщения.
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import ticketService from '@/services/ticketService'
 
 const route = useRoute()
+const router = useRouter()
 const ticketId = route.params.id
 
 // Состояние
@@ -141,7 +126,6 @@ async function fetchTicketAndMessages() {
 
     ticket.value = ticketRes.data
     messages.value = messagesRes.data
-    console.log('MSG: ', messages)
   } catch (err) {
     console.error(err)
     error.value = 'Не удалось загрузить данные тикета'
@@ -163,7 +147,9 @@ const messagesWithFirstMessage = computed(() => {
     is_deleted: false
   }
 
-  return [firstMessage, ...(messages.value || [])]
+  const validMessages = messages.value.filter(msg => !msg.is_deleted)
+
+  return [firstMessage, ...validMessages]
 })
 
 function statusText() {
@@ -203,7 +189,7 @@ async function sendMessage() {
   try {
     const res = await ticketService.sendMessage(ticketId, {
       text: newMessage.value.trim(),
-      sender_type: 'staff'
+      sender_type: 'user'
     })
 
     // Добавляем новое сообщение в список
@@ -226,48 +212,13 @@ async function changeStatus(newStatus) {
   }
 }
 
-// ==== Удаление сообщения ====
-async function deleteMessage(messageId) {
-  try {
-    await ticketService.deleteMessage(ticketId, messageId)
-    messages.value = messages.value.map(msg =>
-      msg.id === messageId ? { ...msg, is_deleted: true } : msg
-    )
-    await autoUpdateStatus()
-  } catch (err) {
-    alert('Ошибка при удалении сообщения')
-    console.error(err)
-  }
-}
+function autoUpdateStatus() {
+  if (ticket.value.status === 'closed') return
 
-const lastSenderType = computed(() => {
-  if (messages.value.length === 0) return null
-  return messages.value[messages.value.length - 1]?.sender_type
-})
+  changeStatus('open')
+}
 
 onMounted(async () => {
   await fetchTicketAndMessages()
-  autoUpdateStatus()
 })
-
-function autoUpdateStatus() {
-  // Получаем список всех сообщений без описания
-  const validMessages = messages.value.filter(msg => !msg.is_deleted)
-
-  // Последнее непрочитанное сообщение
-  const lastValidMessage = [...validMessages].pop()
-
-  if (!lastValidMessage && ticket.value.status !== 'closed') {
-    changeStatus('open')
-    return
-  }
-
-  const senderType = lastValidMessage?.sender_type
-
-  if (senderType === 'user' && ticket.value.status !== 'closed') {
-    changeStatus('open')
-  } else if (['staff', 'ai'].includes(senderType) && ticket.value.status !== 'closed') {
-    changeStatus('in_progress')
-  }
-}
 </script>

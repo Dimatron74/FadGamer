@@ -43,7 +43,7 @@ class Category(models.Model):
 # ==== Тикет техподдержки ====
 class Ticket(models.Model):
     STATUS_CHOICES = (
-        ('open', 'Открыт'),
+        ('open', 'Ожидает ответа'),
         ('in_progress', 'В работе'),
         ('closed', 'Закрыт'),
     )
@@ -114,6 +114,7 @@ class Message(models.Model):
     )
     text = models.TextField('Текст сообщения')
     created_at = models.DateTimeField('Дата', default=now)
+    is_deleted = models.BooleanField('Удалено', default=False)
 
     def __str__(self):
         return f"Сообщение от {self.get_sender_type_display()}"

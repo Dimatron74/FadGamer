@@ -19,6 +19,7 @@ export const useTicketStore = defineStore('ticket', {
       try {
         const res = await ticketApi.getTickets()
         this.tickets = res.data
+        console.log('Tickets: ', res.data)
       } catch (err) {
         this.error = 'Не удалось загрузить тикеты'
         console.error(err)

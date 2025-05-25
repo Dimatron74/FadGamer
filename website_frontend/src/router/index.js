@@ -6,6 +6,8 @@ import LoginView from '@/views/profiles/LoginView.vue'
 import ProfileView from '@/views/profiles/ProfileView.vue'
 import PromoView from '@/views/profiles/PromoView.vue'
 import SupportView from '@/views/support/SupportView.vue'
+import SupportDetailView from '@/views/support/SupportDetailView.vue'
+import NewTicketView from '@/views/support/NewTicketView.vue'
 import AdminView from '@/views/admin/AdminView.vue'
 import AdminSupportView from '@/views/admin/AdminSupportView.vue'
 import AdminHomeView from '@/views/admin/AdminHomeView.vue'
@@ -50,11 +52,49 @@ const router = createRouter({
       component: SupportView,
       beforeEnter: noAuthMiddleware,
     },
+    // {
+    //   path: '/profile',
+    //   name: 'profile',
+    //   component: ProfileView,
+    //   beforeEnter: noAuthMiddleware,
+    //   children: [
+    //     {
+    //       path: 'support',
+    //       name: 'user-support',
+    //       component: SupportView,
+    //     },
+    //     {
+    //       path: 'support/:id',
+    //       name: 'user-support-detail',
+    //       component: SupportDetailView,
+    //     },
+    //     {
+    //       path: 'support/new',
+    //       name: 'user-support-new',
+    //       component: NewTicketView,
+    //     },
+    //   ]
+    // },
     {
       path: '/profile',
       name: 'profile',
       component: ProfileView,
       beforeEnter: noAuthMiddleware,
+    },
+    {
+      path: '/profile/support',
+      name: 'user-support',
+      component: SupportView,
+    },
+    {
+      path: '/profile/support/:id',
+      name: 'user-support-detail',
+      component: SupportDetailView,
+    },
+    {
+      path: '/profile/support/new',
+      name: 'user-support-new',
+      component: NewTicketView,
     },
     {
       path: '/promo',

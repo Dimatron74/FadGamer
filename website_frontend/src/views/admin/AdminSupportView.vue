@@ -45,7 +45,7 @@
 
           <div class="mt-3 flex justify-between text-sm">
             <span class="text-mywhite-1">ID запроса: TICKET-{{ ticket.id }}</span>
-            <span class="text-mywhite-2">Сообщений: {{ ticket.messages.length }}</span>
+            <span class="text-mywhite-2">Сообщений: {{ ticket.messages_count }}</span>
           </div>
         </div>
       </div>

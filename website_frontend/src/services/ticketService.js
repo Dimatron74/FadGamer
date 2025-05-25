@@ -45,8 +45,12 @@ export default {
   sendMessage(ticketId, messageData) {
     return apiClient.post(`/support/tickets/${ticketId}/messages/`, messageData)
   },
-
+  
   updateTicketStatus(ticketId, status) {
-    return apiClient.patch(`/support/tickets/${ticketId}/`, { status })
+    return apiClient.patch(`/support/tickets/${ticketId}/set_status/`, { status })
+  },
+
+  deleteMessage(ticketId, messageId) {
+    return apiClient.patch(`/support/tickets/${ticketId}/messages/${messageId}/`, { is_deleted: true })
   }
 }

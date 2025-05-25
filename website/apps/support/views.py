@@ -1,10 +1,13 @@
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from .models import Service, Category, Ticket, Message
+from rest_framework.decorators import action
+from django.core.exceptions import PermissionDenied
 from .serializers import (
     ServiceSerializer, CategorySerializer,
     TicketSerializer, MessageSerializer
 )
+
 
 # ==== Read-only views ====
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
@@ -34,6 +37,19 @@ class TicketViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+    @action(detail=True, methods=['patch'])
+    def set_status(self, request, pk=None):
+        ticket = self.get_object()
+        status_value = request.data.get('status')
+
+        if status_value not in dict(Ticket.STATUS_CHOICES):
+            return Response({'error': 'Неверный статус'}, status=status.HTTP_400_BAD_REQUEST)
+
+        ticket.status = status_value
+        ticket.save()
+
+        return Response({'status': ticket.status}, status=status.HTTP_200_OK)
+
 # ==== Message views ====
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
@@ -52,3 +68,16 @@ class MessageViewSet(viewsets.ModelViewSet):
             author=author,
             sender_type=sender_type
         )
+    
+    def perform_update(self, serializer):
+        # Разрешаем обновлять только `is_deleted`
+        allowed_fields = {'is_deleted'}
+        data = self.request.data
+
+        for field in data:
+            if field not in allowed_fields:
+                raise PermissionDenied(f"Поле '{field}' нельзя редактировать")
+
+        serializer.save()
+    
+    lookup_url_kwarg = 'message_id'
