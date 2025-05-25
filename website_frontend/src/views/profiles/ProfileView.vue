@@ -108,7 +108,7 @@ export default {
         <!-- Никнейм и UID -->
         <div class="text-center mb-6">
           <h2 class="text-xl font-bold text-mywhite-5">{{ userStore.user.name }}</h2>
-          <p class="text-sm text-mywhite-2 truncate">{{ userStore.user.uid }}</p>
+          <p class="text-sm text-mywhite-2 truncate">UID: {{ userStore.user.uid }}</p>
         </div>
 
         <!-- Меню навигации по профилю -->
