@@ -1,18 +1,20 @@
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
-from .models import Service, Category, Ticket, Message
 from rest_framework.decorators import action
 from django.core.exceptions import PermissionDenied
+from .models import Service, Category, Ticket, Message
 from .serializers import (
-    ServiceSerializer, CategorySerializer,
-    TicketSerializer, MessageSerializer
+    ServiceSerializer,
+    CategorySerializer,
+    TicketSerializer,
+    MessageSerializer
 )
-
 
 # ==== Read-only views ====
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
+
 
 class CategoryList(generics.ListAPIView):
     serializer_class = CategorySerializer
@@ -23,18 +25,14 @@ class CategoryList(generics.ListAPIView):
             return Category.objects.filter(service__slug=service_slug)
         return Category.objects.all()
 
-# ==== Ticket views ====
-class TicketViewSet(viewsets.ModelViewSet):
+
+# ==== User Ticket ViewSet (только свои тикеты) ====
+class UserTicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        # Если пользователь is_staff — показываем все тикеты
-        if user.is_staff:
-            return Ticket.objects.all()
-        # Иначе — только его тикеты
-        return Ticket.objects.filter(user=user)
+        return Ticket.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -51,6 +49,29 @@ class TicketViewSet(viewsets.ModelViewSet):
         ticket.save()
 
         return Response({'status': ticket.status}, status=status.HTTP_200_OK)
+
+
+# ==== Admin Ticket ViewSet (все тикеты, только для is_staff) ====
+class AdminTicketViewSet(viewsets.ModelViewSet):
+    serializer_class = TicketSerializer
+    permission_classes = [permissions.IsAdminUser]  # Только для is_staff
+
+    def get_queryset(self):
+        return Ticket.objects.all()
+
+    @action(detail=True, methods=['patch'])
+    def set_status(self, request, pk=None):
+        ticket = self.get_object()
+        status_value = request.data.get('status')
+
+        if status_value not in dict(Ticket.STATUS_CHOICES):
+            return Response({'error': 'Неверный статус'}, status=status.HTTP_400_BAD_REQUEST)
+
+        ticket.status = status_value
+        ticket.save()
+
+        return Response({'status': ticket.status}, status=status.HTTP_200_OK)
+
 
 # ==== Message views ====
 class MessageViewSet(viewsets.ModelViewSet):
@@ -70,9 +91,8 @@ class MessageViewSet(viewsets.ModelViewSet):
             author=author,
             sender_type=sender_type
         )
-    
+
     def perform_update(self, serializer):
-        # Разрешаем обновлять только `is_deleted`
         allowed_fields = {'is_deleted'}
         data = self.request.data
 
@@ -81,5 +101,5 @@ class MessageViewSet(viewsets.ModelViewSet):
                 raise PermissionDenied(f"Поле '{field}' нельзя редактировать")
 
         serializer.save()
-    
+
     lookup_url_kwarg = 'message_id'

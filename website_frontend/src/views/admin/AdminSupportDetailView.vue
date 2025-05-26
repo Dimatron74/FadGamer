@@ -139,7 +139,7 @@ const newMessage = ref('')
 async function fetchTicketAndMessages() {
   try {
     const [ticketRes, messagesRes] = await Promise.all([
-      ticketService.getTicket(ticketId),
+      ticketService.getAdminTicket(ticketId),
       ticketService.getMessages(ticketId)
     ])
 
@@ -222,7 +222,7 @@ async function sendMessage() {
 // ==== Изменение статуса ====
 async function changeStatus(newStatus) {
   try {
-    const res = await ticketService.updateTicketStatus(ticketId, newStatus)
+    const res = await ticketService.updateAdminTicketStatus(ticketId, newStatus)
     ticket.value.status = res.data.status
   } catch (err) {
     console.error(err)

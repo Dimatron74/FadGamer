@@ -70,7 +70,7 @@ const ticketStore = useTicketStore()
 const { filteredTickets, loading, selectedStatus, searchQuery } = storeToRefs(ticketStore)
 
 onMounted(() => {
-  ticketStore.fetchTickets()
+  ticketStore.fetchTickets({ isAdmin: true })
 })
 </script>
 

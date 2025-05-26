@@ -38,6 +38,7 @@ watchEffect(() => {
   if (activeTab.value === 'support') {
     hasLoadedSupportData.value = true
     ticketStore.fetchTickets()
+    console.log(ticketStore)
   }
 })
 

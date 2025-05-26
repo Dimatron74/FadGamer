@@ -13,13 +13,15 @@ export const useTicketStore = defineStore('ticket', {
   }),
 
   actions: {
-    async fetchTickets() {
+    async fetchTickets(options = {}) {
+      const { isAdmin = false } = options
+
       this.loading = true
       this.error = null
+
       try {
-        const res = await ticketApi.getTickets()
+        const res = await ticketApi[isAdmin ? 'getAdminTickets' : 'getTickets']()
         this.tickets = res.data
-        console.log('Tickets: ', res.data)
       } catch (err) {
         this.error = 'Не удалось загрузить тикеты'
         console.error(err)
