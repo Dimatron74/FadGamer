@@ -20,6 +20,11 @@ urlpatterns = [
     path('admin/tickets/<int:pk>/', AdminTicketViewSet.as_view({'get': 'retrieve'})),
     path('admin/tickets/<int:pk>/set_status/', AdminTicketViewSet.as_view({'patch': 'set_status'})),
 
+    # Админские сообщения
+    path('admin/tickets/<int:ticket_id>/messages/', MessageViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('admin/tickets/<int:ticket_id>/messages/<int:message_id>/', 
+         MessageViewSet.as_view({'patch': 'update', 'delete': 'destroy'})),
+
     # Сообщения
     path('tickets/<int:ticket_id>/messages/', MessageViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('tickets/<int:ticket_id>/set_status/', UserTicketViewSet.as_view({'patch': 'set_status'})),

@@ -59,5 +59,8 @@ export default {
   },
   updateAdminTicketStatus(ticketId, status) {
     return apiClient.patch(`/support/admin/tickets/${ticketId}/set_status/`, { status })
-  }
+  },
+  getAdminMessages(ticketId) {
+    return apiClient.get(`/support/admin/tickets/${ticketId}/messages/`)
+  },
 }

@@ -77,10 +77,18 @@ class AdminTicketViewSet(viewsets.ModelViewSet):
 class MessageViewSet(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_url_kwarg = 'message_id'
 
     def get_queryset(self):
         ticket_id = self.kwargs['ticket_id']
-        return Message.objects.filter(ticket_id=ticket_id)
+        user = self.request.user
+
+        # Если это админка — показываем всё
+        if '/admin/' in self.request.path and user.is_staff:
+            return Message.objects.filter(ticket_id=ticket_id)
+
+        # Иначе — только не удалённые
+        return Message.objects.filter(ticket_id=ticket_id, is_deleted=False)
 
     def perform_create(self, serializer):
         ticket_id = self.kwargs['ticket_id']
@@ -101,5 +109,3 @@ class MessageViewSet(viewsets.ModelViewSet):
                 raise PermissionDenied(f"Поле '{field}' нельзя редактировать")
 
         serializer.save()
-
-    lookup_url_kwarg = 'message_id'

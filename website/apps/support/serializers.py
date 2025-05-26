@@ -73,6 +73,12 @@ class TicketSerializer(serializers.ModelSerializer):
             'service': obj.user.nickname,
         }
     
-    @staticmethod
-    def get_messages_count(obj):
-        return obj.messages.count() + 1
+    def get_messages_count(self, obj):
+        request = self.context.get('request')
+
+        # Если запрос из админки — считаем все сообщения
+        if '/admin/' in request.path if request else False:
+            return obj.messages.count() + 1
+
+        # Иначе — только не удалённые
+        return obj.messages.filter(is_deleted=False).count() + 1

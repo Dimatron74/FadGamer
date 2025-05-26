@@ -140,7 +140,7 @@ async function fetchTicketAndMessages() {
   try {
     const [ticketRes, messagesRes] = await Promise.all([
       ticketService.getAdminTicket(ticketId),
-      ticketService.getMessages(ticketId)
+      ticketService.getAdminMessages(ticketId)
     ])
 
     ticket.value = ticketRes.data
