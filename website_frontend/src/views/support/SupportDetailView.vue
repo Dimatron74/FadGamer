@@ -19,8 +19,8 @@
         <h1 class="text-3xl font-bold text-mywhite-5">{{ ticket.title }}</h1>
 
         <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
-          <span class="font-medium">Сервис: {{ ticket.service?.name || '—' }}</span>
-          <span class="text-mywhite-2">Категория: {{ ticket.category?.name || '—' }}</span>
+          <span class="font-medium">Сервис: {{ ticket.service_name }}</span>
+          <span class="text-mywhite-2">Категория: {{ ticket.category_name }}</span>
 
           <!-- Статус -->
           <span :class="statusClass()" class="px-3 py-1 rounded-full text-xs font-medium ml-auto">

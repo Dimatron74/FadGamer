@@ -17,10 +17,14 @@
       <!-- Заголовок -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-mywhite-5">{{ ticket.title }}</h1>
-
         <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
           <span class="font-medium">Автор: {{ ticket.user?.nickname || '—' }}</span>
           <span class="text-mywhite-2">UID: {{ ticket.user?.uid || '—' }}</span>
+        </div>
+
+        <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
+          <span class="font-medium">Сервис: {{ ticket.service_name }}</span>
+          <span class="text-mywhite-2">Категория: {{ ticket.category_name }}</span>
           
           <!-- Статус -->
           <span :class="statusClass()" class="px-3 py-1 rounded-full text-xs font-medium ml-auto">
@@ -141,7 +145,6 @@ async function fetchTicketAndMessages() {
 
     ticket.value = ticketRes.data
     messages.value = messagesRes.data
-    console.log('MSG: ', messages)
   } catch (err) {
     console.error(err)
     error.value = 'Не удалось загрузить данные тикета'

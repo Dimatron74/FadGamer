@@ -24,15 +24,20 @@ const removeToken = () => {
   router.push('/')
 }
 
+// Используем ticketStore
 const ticketStore = useTicketStore()
+
+// Подключаем реактивные данные в setup
 const { filteredTickets, loading } = storeToRefs(ticketStore)
 
-// Автоматически загружаем тикеты при переключении на вкладку "support"
+// Флаг, показывает, загружали ли мы тикеты хотя бы раз
+const hasLoadedSupportData = ref(false)
+
+// Автоматически загружаем тикеты при первом переходе на вкладку "support"
 watchEffect(() => {
   if (activeTab.value === 'support') {
-    if (!ticketStore.tickets.length) {
-      ticketStore.fetchTickets()
-    }
+    hasLoadedSupportData.value = true
+    ticketStore.fetchTickets()
   }
 })
 
@@ -45,7 +50,7 @@ const allTabs = [
   { id: 'admin', label: 'Админ панель' }
 ]
 
-// Фильтруем вкладки: показываем "админ" только для is_staff
+// Фильтруем вкладки: показываем "админ" только для staff
 const tabs = computed(() => {
   return allTabs.filter(tab => {
     if (tab.id === 'admin') {
@@ -54,7 +59,6 @@ const tabs = computed(() => {
     return true
   })
 })
-
 </script>
 
 <script>

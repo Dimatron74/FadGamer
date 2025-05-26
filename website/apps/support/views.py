@@ -30,8 +30,10 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        # Если пользователь is_staff — показываем все тикеты
         if user.is_staff:
             return Ticket.objects.all()
+        # Иначе — только его тикеты
         return Ticket.objects.filter(user=user)
 
     def perform_create(self, serializer):

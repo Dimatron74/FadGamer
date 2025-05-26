@@ -50,19 +50,27 @@ class TicketSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     service = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all())
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    service_name = serializers.CharField(source='service.name', read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
     messages_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Ticket
         fields = [
             'id', 'user', 'service', 'category', 'title',
-            'description', 'status', 'created_at', 'updated_at', 'messages_count'
+            'description', 'status', 'created_at', 'updated_at', 
+            'messages_count', 'service_name', 'category_name',
         ]
 
     def get_user(self, obj):
         return {
             'uid': obj.user.uid,
             'nickname': obj.user.nickname,
+        }
+    def get_category_service(self, obj):
+        return {
+            'category': obj.user.uid,
+            'service': obj.user.nickname,
         }
     
     @staticmethod
