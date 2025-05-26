@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.exceptions import PermissionDenied
 from .models import Service, Category, Ticket, Message
+from django.db.models import Case, When, Value, IntegerField, DateTimeField, F, Q
 from .serializers import (
     ServiceSerializer,
     CategorySerializer,
@@ -57,7 +58,32 @@ class AdminTicketViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAdminUser]  # Только для is_staff
 
     def get_queryset(self):
-        return Ticket.objects.all()
+        return Ticket.objects.order_by(
+            Case(
+                When(status='open', then=Value(0)),
+                When(status='in_progress', then=Value(1)),
+                When(status='closed', then=Value(2)),
+                output_field=IntegerField()
+            ),
+            # Для open — сортировка по возрастанию (FIFO)
+            Case(
+                When(status='open', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).asc(nulls_last=True),
+            # Для in_progress — по убыванию (LIFO)
+            Case(
+                When(status='in_progress', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).desc(nulls_last=True),
+            # Для closed — по убыванию (LIFO)
+            Case(
+                When(status='closed', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).desc(nulls_last=True),
+        )
 
     @action(detail=True, methods=['patch'])
     def set_status(self, request, pk=None):
@@ -99,6 +125,16 @@ class MessageViewSet(viewsets.ModelViewSet):
             author=author,
             sender_type=sender_type
         )
+
+        ticket = Ticket.objects.get(id=ticket_id)
+
+        # Если последнее сообщение от пользователя — меняем статус на 'in_progress'
+        if sender_type == 'user':
+            ticket.status = 'open'
+            ticket.save(update_fields=['status'])
+        else:
+            ticket.status = 'in_progress'
+            ticket.save(update_fields=['status'])
 
     def perform_update(self, serializer):
         allowed_fields = {'is_deleted'}

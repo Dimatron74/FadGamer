@@ -53,13 +53,14 @@ class TicketSerializer(serializers.ModelSerializer):
     service_name = serializers.CharField(source='service.name', read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
     messages_count = serializers.SerializerMethodField()
+    last_message_time = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Ticket
         fields = [
             'id', 'user', 'service', 'category', 'title',
             'description', 'status', 'created_at', 'updated_at', 
-            'messages_count', 'service_name', 'category_name',
+            'messages_count', 'service_name', 'category_name', 'last_message_time',
         ]
 
     def get_user(self, obj):

@@ -205,8 +205,8 @@ async function sendMessage() {
 // ==== Изменение статуса ====
 async function changeStatus(newStatus) {
   try {
-    const res = await ticketService.updateTicketStatus(ticketId, newStatus)
-    ticket.value.status = res.data.status
+    // const res = await ticketService.updateTicketStatus(ticketId, newStatus)
+    ticket.value.status = 'open'
   } catch (err) {
     console.error(err)
   }
