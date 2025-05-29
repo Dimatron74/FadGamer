@@ -26,7 +26,6 @@ const menuItems = [
     children: [
       { label: 'Пользователи', route: '/admin/users' },
       { label: 'Блокировки', route: '/admin/blocked' },
-      { label: 'Роли', route: '/admin/roles' }
     ]
   },
   { label: 'Посты', route: '/admin/posts', icon: '📝' },
