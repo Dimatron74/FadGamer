@@ -26,7 +26,7 @@
 
         <div>
           <label class="block text-mywhite-2 text-sm">Автор</label>
-          <p class="text-mywhite-5">{{ promoCode.author.name }} ({{ promoCode.author.uid }})</p>
+          <p class="text-mywhite-5">{{ promoCode.author?.nickname ? `${promoCode.author.nickname} (UID: ${promoCode.author.uid})` : '—' }}</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
@@ -45,28 +45,20 @@
           <details class="bg-myblack-4 p-4 rounded-md">
             <summary class="cursor-pointer text-mywhite-3">Бонусы</summary>
             <ul class="mt-2 list-disc pl-5 space-y-1 text-mywhite-2">
-              <li v-for="(bonus, i) in promoCode.bonuses" :key="i">{{ bonus.type }}: {{ bonus.amount || 'Не указано' }}</li>
-            </ul>
-          </details>
-        </div>
-
-        <!-- Условия активации -->
-        <div>
-          <details class="bg-myblack-4 p-4 rounded-md">
-            <summary class="cursor-pointer text-mywhite-3">Условия активации</summary>
-            <ul class="mt-2 list-disc pl-5 space-y-1 text-mywhite-2">
-              <li v-for="(cond, i) in promoCode.conditions" :key="i">{{ cond.type }}: {{ cond.value || 'Не указано' }}</li>
+              <li v-for="(bonus, i) in promoCode.bonuses" :key="i">
+                {{ getBonusLabel(bonus) }}
+              </li>
             </ul>
           </details>
         </div>
 
         <!-- Кнопки действий -->
         <div v-if="isActionAllowed" class="flex gap-4 mt-6">
-          <button @click="endPromoCode" class="bg-myred-2 hover:bg-myred-1 text-white px-4 py-2 rounded-md">
-            Завершить
-          </button>
-          <button @click="deletePromoCode" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+          <button @click="deletePromoCode" class="bg-myred-2 hover:bg-myred-1 text-white px-4 py-2 rounded-md">
             Удалить
+          </button>
+          <button @click="endPromoCode" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-md">
+            Завершить
           </button>
         </div>
       </div>
@@ -76,6 +68,7 @@
 
 <script setup>
 import { defineProps, computed } from 'vue'
+import promoCodeService from '@/services/promoCodeService'
 
 const props = defineProps({
   promoCode: {
@@ -84,69 +77,81 @@ const props = defineProps({
   }
 })
 
-const BONUS_TYPES = {
-  coins: { label: 'Монеты', hasAmount: true },
-  premium: { label: 'Премиум аккаунт', hasAmount: false },
-  access: { label: 'Доступ к мероприятию', hasAmount: false },
-  skin: { label: 'Скин', hasAmount: true }
-}
+const emit = defineEmits(['close', 'update'])
 
-const CONDITION_TYPES = {
-  coins: { label: 'Минимум монет', hasValue: true },
-  level: { label: 'Минимум уровень', hasValue: true },
-  event: { label: 'Доступ к событию', hasValue: false },
-  item: { label: 'Наличие предмета', hasValue: false }
-}
-
-const emit = defineEmits(['close'])
-
+// Отображение статуса
 const statusText = computed(() => {
   switch (props.promoCode.status) {
     case 'active': return 'Активный'
     case 'expired': return 'Истёк'
     case 'used': return 'Использован'
+    case 'inactive': return 'Неактивен'
+    case 'closed': return 'Завершён'
     default: return 'Неизвестный'
   }
 })
 
+// Отображение игры
 const gameText = computed(() => {
-  return props.promoCode.game === 'game1' ? 'Игра 1' : props.promoCode.game === 'game2' ? 'Игра 2' : 'Любая игра'
+  return props.promoCode.service?.name || 'Неизвестная игра'
 })
 
+// Проверка доступности действий
 const isActionAllowed = computed(() => props.promoCode.status !== 'expired' && props.promoCode.status !== 'used')
 
+// Форматирование даты
 function formatDate(dateStr) {
+  if (!dateStr) return ''
   const date = new Date(dateStr)
   return date.toLocaleString('ru-RU')
 }
 
-function endPromoCode() {
-  // Логика завершения промокода
-  console.log('Завершить промокод:', props.promoCode.code)
+// Получение имени бонуса — без BONUS_TYPES
+function getBonusLabel(bonus) {
+  if (!bonus.bonus_type) return 'Неизвестный тип'
+
+  const name = bonus.bonus_type.name
+  const amount = bonus.amount
+
+  if (amount != null && amount !== undefined) {
+    return `${name}: ${amount}`
+  }
+
+  return name
 }
 
-function deletePromoCode() {
-  // Логика удаления промокода
-  console.log('Удалить промокод:', props.promoCode.code)
+// Завершение промокода
+async function endPromoCode() {
+  try {
+    await promoCodeService.updatePromoCode(props.promoCode.id, {
+      status: 'closed'
+    })
+    emit('update')
+    alert('Промокод завершён')
+  } catch (e) {
+    console.error('Ошибка при завершении промокода:', e)
+    alert('Не удалось завершить промокод')
+  }
+}
+
+// Удаление промокода
+async function deletePromoCode() {
+  if (!confirm('Вы уверены, что хотите удалить этот промокод?')) return
+
+  try {
+    await promoCodeService.deletePromoCode(props.promoCode.id)
+    emit('update') // триггерим обновление
+    alert('Промокод удалён')
+    emit('close')
+  } catch (e) {
+    console.error('Ошибка при удалении промокода:', e)
+    alert('Не удалось удалить промокод')
+  }
 }
 
 function handleOutsideClick(e) {
   if (e.target.classList.contains('modal')) {
     emit('close')
   }
-}
-
-function formatBonus(bonus) {
-  if (!bonus || !bonus.type) return 'Неизвестный бонус'
-
-  const config = BONUS_TYPES[bonus.type] || { label: 'Неизвестный тип', hasAmount: false }
-
-  if (config.hasAmount && bonus.amount !== undefined) {
-    return `${config.label}: ${bonus.amount}`
-  } else if (config.hasAmount === false) {
-    return config.label
-  }
-
-  return 'Некорректный бонус'
 }
 </script>

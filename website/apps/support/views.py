@@ -65,7 +65,7 @@ class UserTicketViewSet(viewsets.ModelViewSet):
         executor.submit(run_async_in_thread, self.generate_and_save_ai_reply, ticket.description, ticket.id)
 
     def generate_and_save_ai_reply(self, prompt, ticket_id):
-        ai_response = generate_ai_response(prompt)
+        ai_response = generate_ai_response(prompt, ticket_id)
         ticket = Ticket.objects.get(id=ticket_id)
         Message.objects.create(
             ticket=ticket,
@@ -176,7 +176,7 @@ class MessageViewSet(viewsets.ModelViewSet):
             ticket.save(update_fields=['status'])
 
     def generate_and_save_ai_reply(self, prompt, ticket_id):
-        ai_response = generate_ai_response(prompt)
+        ai_response = generate_ai_response(prompt, ticket_id)
         ticket = Ticket.objects.get(id=ticket_id)
         Message.objects.create(
             ticket=ticket,

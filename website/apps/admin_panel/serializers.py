@@ -1,0 +1,83 @@
+# apps/admin_panel/serializers.py
+
+from rest_framework import serializers
+from .models import PromoCode, PromoCodeBonus, BonusType, UserPromoCodeActivation
+from ..support.models import Service
+from ..profiles.models import User
+
+
+class BonusTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BonusType
+        fields = ['id', 'code', 'name', 'is_amount']
+
+
+class PromoCodeBonusSerializer(serializers.ModelSerializer):
+    bonus_type = BonusTypeSerializer(read_only=True)
+    bonus_type_id = serializers.PrimaryKeyRelatedField(
+        queryset=BonusType.objects.all(),
+        source='bonus_type',
+        write_only=True
+    )
+
+    class Meta:
+        model = PromoCodeBonus
+        fields = ['id', 'bonus_type', 'bonus_type_id', 'amount']
+
+
+class ServiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Service
+        fields = ['id', 'name']
+
+
+class PromoCodeSerializer(serializers.ModelSerializer):
+    bonuses = PromoCodeBonusSerializer(many=True)
+    service = ServiceSerializer(read_only=True)
+    service_id = serializers.PrimaryKeyRelatedField(
+        queryset=Service.objects.all(),
+        source='service',
+        write_only=True
+    )
+    author = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PromoCode
+        fields = [
+            'id', 'code', 'status', 'service', 'service_id',
+            'created_at', 'expires_at', 'author', 'bonuses'
+        ]
+        read_only_fields = ['created_at', 'author']
+
+    def get_author(self, obj):
+        if obj.author:
+            return {
+                "nickname": obj.author.nickname,
+                "uid": obj.author.uid
+            }
+        return None
+
+    def create(self, validated_data):
+        bonuses_data = validated_data.pop('bonuses')
+
+        # Получаем пользователя из контекста
+        user = None
+        request = self.context.get('request')
+        if request and hasattr(request, 'user'):
+            user = request.user
+
+        promo_code = PromoCode.objects.create(author=user, **validated_data)
+
+        for bonus_data in bonuses_data:
+            PromoCodeBonus.objects.create(promocode=promo_code, **bonus_data)
+
+        return promo_code
+
+
+class UserPromoCodeActivationSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(slug_field='nickname', read_only=True)
+    promocode = serializers.StringRelatedField()
+
+    class Meta:
+        model = UserPromoCodeActivation
+        fields = ['id', 'user', 'promocode', 'activated_at', 'is_applied']

@@ -4,6 +4,7 @@ from pathlib import Path
 from llama_cpp import Llama
 import re
 from .rag.retriever import retrieve_relevant_documents
+from .models import Message, Ticket
 
 # Путь к модели
 MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "Qwen3-1.7B-UD-Q8_K_XL.gguf"
@@ -50,41 +51,76 @@ def get_no_answer_response(user_query):
 
 SYSTEM_PROMPT = (
     "Вы — квалифицированный сотрудник технической поддержки игровой студии FadGamers. "
-    "Вы получаете вопросы пользователей и обязаны отвечать только на основе информации, переданной вам в контексте выше. "
-    "Если в контексте нет ответа — вы должны честно сказать, что не можете помочь с этим вопросом. "
+    "Вы получаете вопросы пользователей и обязаны отвечать только на основе информации из контекста выше или истории переписки. "
+    "Пользователь уже находится в службе поддержки — НЕ призывайте его обращаться в поддержку повторно. "
+    "Если в контексте или истории нет точного ответа — честно скажите, что не можете помочь с этим вопросом, и попросите пользователя отключить ИИ и отправить новое сообщение для связи с человеком. "
     "Никогда не опирайтесь на свои знания или догадки. "
+    "Отвечайте вежливо, структурированно и на языке пользователя. "
     "Добавьте завершающий тег: </AI_END>"
 )
 
-def build_rag_prompt(user_message: str):
+def get_ticket_history(ticket_id):
+
+    try:
+        ticket = Ticket.objects.get(id=ticket_id)
+        messages = ticket.messages.all().order_by('created_at')
+
+        history = []
+        for msg in messages:
+            role = 'user' if msg.sender_type == 'user' else 'assistant'
+            history.append({
+                "role": role,
+                "content": msg.text
+            })
+        return history
+    except Ticket.DoesNotExist:
+        return []
+
+def build_rag_prompt(user_message: str, ticket_id=None):
     relevant_docs = retrieve_relevant_documents(user_message)
 
     rag_context = ""
     for doc in relevant_docs:
         rag_context += f"Вопрос: {doc['question']}\nОтвет: {doc['answer']}\n\n"
 
+    # Получаем историю сообщений
+    history = []
+    if ticket_id:
+        history = get_ticket_history(ticket_id)[-6:]
+
     rag_prompt = (
-        "ВНИМАНИЕ: База знаний:\n\n"
+        "ВНИМАНИЕ: Вы обязаны отвечать строго по информации из следующей базы знаний:\n\n"
         f"{rag_context}\n\n"
         
-        "Правила:\n"
-        "1. Используйте ТОЛЬКО информацию из этой базы знаний.\n"
-        f"2. Если в базе знаний нет точного ответа — скажите: {get_no_answer_response(user_message)[1]}\n"
-        "3. НЕ добавляйте информацию, которой нет в базе знаний.\n"
-        "4. НЕ используйте собственные знания, домыслы или предположения.\n"
-        f"5. Ответ должен быть на языке {get_no_answer_response(user_message)[0]}, а не на языке контекста.\n"
+        "Правила поведения:\n"
+        "1. Всегда проверяйте базу знаний перед ответом.\n"
+        "2. Если в базе есть точный ответ — используйте его напрямую.\n"
+        "3. Если точного ответа нет, но есть частично релевантный контекст — сделайте обобщение на основе него.\n"
+        "4. Если контекста нет, но есть история сообщений — опирайтесь на неё, чтобы дать логичный ответ.\n"
+        "5. НИКОГДА не добавляйте информацию, которой нет в контексте или истории.\n"
+        "6. Не выдумывайте, не предполагайте, не угадывайте.\n"
+        f"7. Ответ должен быть на языке {get_no_answer_response(user_message)[0]}, вежливым и структурированным.\n"
+        "8. НЕ призывайте пользователя обращаться в службу поддержки — он уже находится в ней.\n"
+        "9. Если ответа нет ни в контексте, ни в истории — честно скажите об этом и попросите пользователя отключить ИИ и отправить новое сообщение для связи с сотрудником."
+        # f"9. Если вы совсем не знаете ответа — скажите: {get_no_answer_response(user_message)[1]}\n"
     )
 
     full_prompt = [
         {"role": "system", "content": rag_prompt},
         {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": user_message + ' /no_think'}
     ]
+
+    # Добавляем историю
+    full_prompt.extend(history)
+
+    # Добавляем текущий запрос
+    full_prompt.append({"role": "user", "content": user_message + ' /no_think'})
+
     print(full_prompt)
     return full_prompt
 
-def generate_ai_response(prompt: str) -> str:
-    chat_prompt = build_rag_prompt(prompt)
+def generate_ai_response(prompt: str, ticket_id=None) -> str:
+    chat_prompt = build_rag_prompt(prompt, ticket_id=ticket_id)
 
     output = llm.create_chat_completion(
         messages=chat_prompt,

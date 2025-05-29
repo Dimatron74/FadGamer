@@ -27,17 +27,16 @@
         </div>
 
         <div>
-          <label class="block text-mywhite-2 mb-2">Выберите игру</label>
-          <select v-model="form.game" class="w-full bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
-            <option value="game1">Игра 1</option>
-            <option value="game2">Игра 2</option>
+          <label class="block text-mywhite-2 mb-2">Сервис</label>
+          <select v-model="form.service_id" class="w-full bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
+            <option v-for="service in services" :key="service.id" :value="service.id">{{ service.name }}</option>
           </select>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-mywhite-2 mb-2">Дата активации</label>
-            <input v-model="form.created_at" type="datetime-local" class="w-full bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
+            <input v-model="form.created_at" type="datetime-local" disabled class="w-full bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2 opacity-70">
           </div>
           <div>
             <label class="block text-mywhite-2 mb-2">Дата истечения (необязательно)</label>
@@ -45,58 +44,28 @@
           </div>
         </div>
 
-        <!-- Автор заполняется автоматически -->
-        <div>
-          <label class="block text-mywhite-2 mb-2">Автор</label>
-          <input :value="userStore.user.name" disabled class="w-full bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2 opacity-70">
-        </div>
-
         <!-- Бонусы -->
         <div>
-        <label class="block text-mywhite-2 mb-2">Бонусы</label>
-        <div v-for="(bonus, index) in form.bonuses" :key="index" class="flex gap-2 mb-2">
-            <select v-model="bonus.type" class="flex-1 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
-            <option v-for="(item, key) in BONUS_TYPES" :key="key" :value="key">
-                {{ item.label }}
-            </option>
+          <label class="block text-mywhite-2 mb-2">Бонусы</label>
+          <div v-for="(bonus, index) in form.bonuses" :key="index" class="flex gap-2 mb-2">
+            <select v-model="bonus.type_id" class="flex-1 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
+              <option v-for="bt in bonusTypes" :key="bt.id" :value="bt.id">
+                {{ bt.name }}
+              </option>
             </select>
             <input 
-            v-if="BONUS_TYPES[bonus.type]?.hasAmount" 
-            v-model.number="bonus.amount" 
-            type="number" 
-            placeholder="Кол-во" 
-            class="w-32 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2"
+              v-if="getHasAmount(bonus.type_id)"
+              v-model.number="bonus.amount" 
+              type="number" 
+              placeholder="Кол-во" 
+              class="w-32 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2"
             >
             <span v-else class="w-32 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2 text-xs text-center">—</span>
             <button @click="removeBonus(index)" type="button" class="text-red-500 ml-2">×</button>
-        </div>
-        <button @click="addBonus" type="button" class="mt-2 text-mypurple-4 hover:text-mypurple-2">
+          </div>
+          <button @click="addBonus" type="button" class="mt-2 text-mypurple-4 hover:text-mypurple-2">
             ➕ Добавить бонус
-        </button>
-        </div>
-
-        <!-- Условия активации -->
-        <div>
-        <label class="block text-mywhite-2 mb-2">Условия активации</label>
-        <div v-for="(condition, index) in form.conditions" :key="index" class="flex gap-2 mb-2">
-            <select v-model="condition.type" class="flex-1 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2">
-            <option v-for="(item, key) in CONDITION_TYPES" :key="key" :value="key">
-                {{ item.label }}
-            </option>
-            </select>
-            <input 
-            v-if="CONDITION_TYPES[condition.type]?.hasValue" 
-            v-model.number="condition.value" 
-            type="number" 
-            placeholder="Значение" 
-            class="w-32 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2"
-            >
-            <span v-else class="w-32 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded p-2 text-xs text-center">—</span>
-            <button @click="removeCondition(index)" type="button" class="text-red-500 ml-2">×</button>
-        </div>
-        <button @click="addCondition" type="button" class="mt-2 text-mypurple-4 hover:text-mypurple-2">
-            ➕ Добавить условие
-        </button>
+          </button>
         </div>
 
         <!-- Кнопка сохранения -->
@@ -111,48 +80,75 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import promoCodeService from '@/services/promoCodeService'
 import { useUserStore } from '@/stores/user'
 
+const router = useRouter()
 const userStore = useUserStore()
 
+const services = ref([])
+const bonusTypes = ref([])
+
+// Получаем список сервисов (игр)
+onMounted(async () => {
+  try {
+    const [servicesRes, bonusTypesRes] = await Promise.all([
+      promoCodeService.getServices(),
+      promoCodeService.getBonusTypes()
+    ])
+    services.value = servicesRes.data
+    bonusTypes.value = bonusTypesRes.data
+  } catch (e) {
+    console.error('Ошибка при загрузке данных:', e)
+  }
+})
+
+// Форма
 const form = ref({
   code: '',
   status: 'active',
-  game: 'game1',
+  service_id: null,
   created_at: new Date().toISOString().slice(0, 16),
   expires_at: '',
-  bonuses: [{ type: 'coins', amount: 50, noAmount: false }],
-  conditions: [{ type: 'coins', value: 100, noValue: false }]
+  bonuses: [{ type_id: '', amount: null }]
 })
 
 function addBonus() {
-  form.value.bonuses.push({ type: '', amount: null })
+  form.value.bonuses.push({ type_id: '', amount: null })
 }
 
 function removeBonus(index) {
   form.value.bonuses.splice(index, 1)
 }
 
-function addCondition() {
-  form.value.conditions.push({ type: '', value: null })
+function getHasAmount(typeId) {
+  const type = bonusTypes.value.find(bt => bt.id === typeId)
+  return type?.is_amount || false
 }
 
-function removeCondition(index) {
-  form.value.conditions.splice(index, 1)
-}
+async function submitForm() {
+  try {
+    // Преобразуем бонусы
+    const bonusData = form.value.bonuses.map(bonus => ({
+      bonus_type_id: bonus.type_id,
+      amount: bonus.amount || null
+    }))
 
-const BONUS_TYPES = {
-  coins: { label: 'Монеты', hasAmount: true },
-  premium: { label: 'Премиум аккаунт', hasAmount: false }, // например, без количества
-  access: { label: 'Доступ к мероприятию', hasAmount: false },
-  skin: { label: 'Скин', hasAmount: true }
-}
+    const payload = {
+      code: form.value.code,
+      status: form.value.status,
+      service_id: form.value.service_id,
+      expires_at: form.value.expires_at || undefined,
+      bonuses: bonusData
+    }
 
-const CONDITION_TYPES = {
-  coins: { label: 'Минимум монет', hasValue: true },
-  level: { label: 'Минимум уровень', hasValue: true },
-  event: { label: 'Доступ к событию', hasValue: false },
-  item: { label: 'Наличие предмета', hasValue: false }
+    await promoCodeService.createPromoCode(payload)
+    await router.push('/admin/promocodes')
+  } catch (e) {
+    console.error('Ошибка при создании промокода:', e)
+    alert('Не удалось создать промокод')
+  }
 }
 </script>
