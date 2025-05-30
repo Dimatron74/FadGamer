@@ -10,8 +10,8 @@
           <h3 class="text-lg font-semibold text-mywhite-2">Активные пользователи</h3>
           <span class="text-mypurple-5 text-xl">👥</span>
         </div>
-        <p class="text-3xl font-bold text-mywhite-5 mt-2">12 345</p>
-        <p class="text-sm text-mywhite-1 mt-1">+3% за неделю</p>
+        <p class="text-3xl font-bold text-mywhite-5 mt-2">2</p>
+        <p class="text-sm text-mywhite-1 mt-1">+100% за неделю</p>
       </div>
 
       <!-- Карточка 2 -->
@@ -20,8 +20,8 @@
           <h3 class="text-lg font-semibold text-mywhite-2">Промокоды</h3>
           <span class="text-mypurple-5 text-xl">🎟️</span>
         </div>
-        <p class="text-3xl font-bold text-mywhite-5 mt-2">45</p>
-        <p class="text-sm text-mywhite-1 mt-1">Из них 10 активны</p>
+        <p class="text-3xl font-bold text-mywhite-5 mt-2">4</p>
+        <p class="text-sm text-mywhite-1 mt-1">Из них 3 активны</p>
       </div>
 
       <!-- Карточка 3 -->
