@@ -37,9 +37,10 @@
         :key="ticket.id"
         class="ticket-item"
       >
-        <div
-          class="bg-myblack-3 rounded-lg shadow-md p-5 border border-myblack-4 hover:border-mypurple-4 transition-all duration-300 cursor-pointer"
-          @click="$router.push(`/profile/support/${ticket.id}`)"
+        <RouterLink
+          :to="`/profile/support/${ticket.id}`"
+          class="bg-myblack-3 rounded-lg shadow-md p-5 border border-myblack-4 hover:border-mypurple-4 transition-all duration-300 block"
+          @click="scrollToTop"
         >
           <div class="flex justify-between items-start">
             <div class="w-full">
@@ -57,7 +58,7 @@
             <span class="text-mywhite-1">ID запроса: TICKET-{{ ticket.id }}</span>
             <span class="text-mywhite-2">Сообщений: {{ ticket.messages_count }}</span>
           </div>
-        </div>
+        </RouterLink>
       </div>
 
       <!-- Сообщение, если нет запросов -->
@@ -82,6 +83,10 @@ const { filteredTickets, loading, selectedStatus, searchQuery } = storeToRefs(ti
 onMounted(async () => {
   await ticketStore.fetchTickets()
 })
+
+function scrollToTop() {
+  window.scrollTo(0,0);
+}
 </script>
 
 <script>

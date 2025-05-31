@@ -4,6 +4,7 @@ from rest_framework import serializers
 from .models import PromoCode, PromoCodeBonus, BonusType, UserPromoCodeActivation
 from ..support.models import Service
 from ..profiles.models import User
+from django.utils import timezone
 
 
 class BonusTypeSerializer(serializers.ModelSerializer):
@@ -45,9 +46,9 @@ class PromoCodeSerializer(serializers.ModelSerializer):
         model = PromoCode
         fields = [
             'id', 'code', 'status', 'service', 'service_id',
-            'created_at', 'expires_at', 'author', 'bonuses'
+            'created_at', 'expires_at', 'author', 'bonuses', 'max_activations'
         ]
-        read_only_fields = ['created_at', 'author']
+        read_only_fields = ['author']
 
     def get_author(self, obj):
         if obj.author:
@@ -57,20 +58,33 @@ class PromoCodeSerializer(serializers.ModelSerializer):
             }
         return None
 
+    def validate_status(self, value):
+        if not self.instance and value not in ['active', 'inactive']:
+            raise serializers.ValidationError("При создании статус должен быть 'active' или 'inactive'")
+        return value
+
+    def validate_created_at(self, value):
+        if value and value < timezone.now():
+            raise serializers.ValidationError("Дата активации не может быть в прошлом")
+        return value
+
+    def update(self, instance, validated_data):
+        # При обновлении разрешено менять только status
+        status = validated_data.get('status')
+        if status is not None:
+            instance.status = status
+        instance.save()
+        return instance
+
     def create(self, validated_data):
         bonuses_data = validated_data.pop('bonuses')
-
-        # Получаем пользователя из контекста
         user = None
         request = self.context.get('request')
         if request and hasattr(request, 'user'):
             user = request.user
-
         promo_code = PromoCode.objects.create(author=user, **validated_data)
-
         for bonus_data in bonuses_data:
             PromoCodeBonus.objects.create(promocode=promo_code, **bonus_data)
-
         return promo_code
 
 

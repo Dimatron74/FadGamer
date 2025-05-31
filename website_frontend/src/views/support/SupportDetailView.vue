@@ -1,5 +1,6 @@
 <template>
   <div class="bg-myblack-2 text-mywhite-3 p-6 min-h-screen">
+    <!-- Кнопка "Назад" -->
     <RouterLink to="/profile/support" class="inline-flex items-center text-mywhite-3 hover:text-mypurple-5 mb-6 transition">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
@@ -12,71 +13,52 @@
     <!-- Индикатор загрузки -->
     <div v-if="loading" class="text-center py-10">Загрузка...</div>
     <div v-else-if="error" class="text-red-500 text-center py-10">{{ error }}</div>
-
     <div v-else>
-      <!-- Заголовок -->
+      <!-- Заголовок тикета -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-mywhite-5">{{ ticket.title }}</h1>
-
         <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
           <span class="font-medium">Сервис: {{ ticket.service_name }}</span>
           <span class="text-mywhite-2">Категория: {{ ticket.category_name }}</span>
-
-          <!-- Статус -->
           <span :class="statusClass()" class="px-3 py-1 rounded-full text-xs font-medium ml-auto">
             {{ statusText() }}
           </span>
           <span class="text-mywhite-1">ID: {{ ticket.id }}</span>
         </div>
-
         <div class="border-t border-myblack-4 mt-6"></div>
       </div>
 
-      <!-- Чат -->
-      <div class="max-w-4xl mx-auto space-y-6">
-        <div v-for="(msg, index) in messagesWithFirstMessage" :key="index" class="flex flex-col">
-          <!-- Первое сообщение (описание тикета) -->
-          <div v-if="index === 0" class="w-full md:w-8/12 self-start">
-            <div class="relative bg-myblack-3 rounded-lg p-4 mb-1">
-              <div class="absolute left-0 top-0 bottom-0 w-1 bg-myred-4"></div>
-              <p class="text-mywhite-2 whitespace-pre-line pl-4">{{ msg.text }}</p>
+      <!-- Чат с отдельной прокруткой -->
+      <div class="max-w-4xl mx-auto h-[60vh] overflow-y-auto pr-2 chat-container" ref="chatContainer">
+        <div v-for="(msg, index) in messagesWithFirstMessage" :key="index" class="flex flex-col mb-4">
+          <!-- Сообщение от пользователя -->
+          <div v-if="msg.sender_type === 'user'" class="w-full md:w-8/12 self-end">
+
+            <div class="bg-mypurple-4 text-white rounded-lg p-4 mb-1">
+              <p class="whitespace-pre-line">{{ msg.text }}</p>
             </div>
-            <div class="text-xs text-mywhite-1 pl-6 mt-1">{{ formatTime(msg.created_at) }}</div>
+            <div class="text-xs text-mywhite-1 text-right pr-2 mt-1">
+              {{ formatTime(msg.created_at) }}
+            </div>
           </div>
 
-          <!-- Сообщение от пользователя или бота -->
-          <div v-else-if="msg.sender_type === 'user'" class="w-full md:w-8/12 self-start">
+          <!-- Сообщение от ИИ или сотрудника -->
+          <div v-else class="w-full md:w-8/12 self-start">
+            <div v-if="msg.sender_type == 'ai'" class="text-left text-xs text-mywhite-1 mb-1 pl-2">
+              Искусственный Интеллект Qwen3
+            </div>
             <div class="bg-myblack-3 rounded-lg p-4 mb-1">
               <p class="text-mywhite-2 whitespace-pre-line">{{ msg.text }}</p>
             </div>
-            <div class="text-xs text-mywhite-1 pl-4 mt-1">{{ formatTime(msg.created_at) }}</div>
-          </div>
-
-          <!-- Сообщение от сотрудника -->
-          <div v-else class="w-full md:w-8/12 self-end">
-            <!-- Автор -->
-            <div v-if="msg.sender_type == 'ai'" class="text-right text-xs text-mywhite-1 pr-2 mb-1">
-              Искусственный Интеллект Qwen3
-            </div>
-
-            <!-- Тело сообщения -->
-            <div
-              class="bg-mypurple-4 text-white rounded-lg p-4 mb-1"
-              :class="{ 'opacity-50 line-through': msg.is_deleted }"
-            >
-              <p class="whitespace-pre-line">{{ msg.text }}</p>
-            </div>
-
-            <!-- Время -->
-            <div class="text-xs text-mywhite-1 text-right pr-2 mt-1">
+            <div class="text-xs text-mywhite-1 pl-2 mt-1">
               {{ formatTime(msg.created_at) }}
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Форма ответа -->
-      <form @submit.prevent="sendMessage" class="mt-10 max-w-4xl mx-auto" v-if="ticket.status !== 'closed'">
+      <!-- Форма отправки сообщения -->
+      <form @submit.prevent="sendMessage" class="mt-6 max-w-4xl mx-auto" v-if="ticket.status !== 'closed'">
         <div class="flex items-center gap-2">
           <textarea
             v-model="newMessage"
@@ -93,6 +75,7 @@
         </div>
       </form>
 
+      <!-- Блок при закрытом тикете -->
       <div v-else class="mt-10 text-center text-mywhite-2">
         Этот тикет закрыт. Вы не можете отправлять новые сообщения.
       </div>
@@ -101,7 +84,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ticketService from '@/services/ticketService'
 
@@ -115,6 +98,8 @@ const error = ref(null)
 const ticket = ref(null)
 const messages = ref([])
 const newMessage = ref('')
+const chatContainer = ref(null)
+let pollingInterval = ref(null)
 
 // ==== Получение данных ====
 async function fetchTicketAndMessages() {
@@ -123,7 +108,6 @@ async function fetchTicketAndMessages() {
       ticketService.getTicket(ticketId),
       ticketService.getMessages(ticketId)
     ])
-
     ticket.value = ticketRes.data
     messages.value = messagesRes.data
   } catch (err) {
@@ -131,24 +115,40 @@ async function fetchTicketAndMessages() {
     error.value = 'Не удалось загрузить данные тикета'
   } finally {
     loading.value = false
+    await nextTick()
+    scrollToBottom()
   }
 }
 
-onMounted(fetchTicketAndMessages)
+// ==== Обновление статуса тикета ====
+async function refreshTicketStatus() {
+  try {
+    const res = await ticketService.getTicket(ticketId)
+    ticket.value.status = res.data.status
+  } catch (err) {
+    console.error('Ошибка при обновлении статуса:', err)
+  }
+}
+
+// ==== Монтирование ====
+onMounted(async () => {
+  await fetchTicketAndMessages()
+  await refreshTicketStatus()
+  await nextTick()
+  scrollToBottom()
+  startPolling() // ✅ Запуск опроса при входе на страницу
+})
 
 // ==== Вычисляемые свойства ====
 const messagesWithFirstMessage = computed(() => {
   if (!ticket.value || !ticket.value.description) return []
-
   const firstMessage = {
     sender_type: 'user',
     text: ticket.value.description,
     created_at: ticket.value.created_at,
     is_deleted: false
   }
-
   const validMessages = messages.value.filter(msg => !msg.is_deleted)
-
   return [firstMessage, ...validMessages]
 })
 
@@ -185,40 +185,76 @@ function formatTime(time) {
 // ==== Отправка сообщения ====
 async function sendMessage() {
   if (!newMessage.value.trim()) return
-
   try {
     const res = await ticketService.sendMessage(ticketId, {
       text: newMessage.value.trim(),
       sender_type: 'user'
     })
-
     // Добавляем новое сообщение в список
     messages.value.push(res.data)
     newMessage.value = ''
-    await autoUpdateStatus()
+    await nextTick()
+    scrollToBottom()
+    await refreshTicketStatus()
+    // Запускаем опрос сервера на наличие ответа ИИ
+    startPolling()
   } catch (err) {
     console.error('Ошибка при отправке сообщения:', err)
     alert('Не удалось отправить сообщение')
   }
 }
 
-// ==== Изменение статуса ====
-async function changeStatus(newStatus) {
-  try {
-    // const res = await ticketService.updateTicketStatus(ticketId, newStatus)
-    ticket.value.status = 'open'
-  } catch (err) {
-    console.error(err)
+// ==== Прокрутка вниз ====
+function scrollToBottom() {
+  const container = chatContainer.value
+  if (container) {
+    container.scrollTop = container.scrollHeight
   }
 }
 
-function autoUpdateStatus() {
-  if (ticket.value.status === 'closed') return
-
-  changeStatus('open')
+// ==== Опрос сервера на наличие новых сообщений ====
+async function pollForNewMessages() {
+  try {
+    const res = await ticketService.getMessages(ticketId)
+    const latestMessages = res.data.filter(msg => !msg.is_deleted)
+    if (latestMessages.length > messages.value.length) {
+      messages.value = latestMessages
+      await nextTick()
+      scrollToBottom()
+      await refreshTicketStatus()
+    }
+  } catch (err) {
+    console.error('Ошибка при опросе новых сообщений:', err)
+  }
 }
 
-onMounted(async () => {
-  await fetchTicketAndMessages()
+function startPolling() {
+  stopPolling()
+  pollingInterval.value = setInterval(pollForNewMessages, 8000)
+}
+
+function stopPolling() {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value)
+    pollingInterval.value = null
+  }
+}
+
+// ==== Автоостановка опроса при выходе из компонента ====
+onBeforeUnmount(() => {
+  stopPolling()
 })
 </script>
+
+<style scoped>
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-container::-webkit-scrollbar-track {
+  background: #1f1f1f;
+}
+.chat-container::-webkit-scrollbar-thumb {
+  background: #5e5e5e;
+  border-radius: 3px;
+}
+</style>

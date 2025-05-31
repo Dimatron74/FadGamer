@@ -1,3 +1,5 @@
+# support/views.py
+
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -46,7 +48,32 @@ class UserTicketViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Ticket.objects.filter(user=self.request.user)
+        return Ticket.objects.order_by(
+            Case(
+                When(status='open', then=Value(1)),
+                When(status='in_progress', then=Value(0)),
+                When(status='closed', then=Value(2)),
+                output_field=IntegerField()
+            ),
+            # Для open — сортировка по возрастанию (FIFO)
+            Case(
+                When(status='open', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).desc(nulls_last=True),
+            # Для in_progress — по убыванию (LIFO)
+            Case(
+                When(status='in_progress', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).desc(nulls_last=True),
+            # Для closed — по убыванию (LIFO)
+            Case(
+                When(status='closed', then=F('last_message_time')),
+                default=None,
+                output_field=DateTimeField()
+            ).desc(nulls_last=True),
+        )
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -72,6 +99,9 @@ class UserTicketViewSet(viewsets.ModelViewSet):
             text=ai_response,
             sender_type='ai'
         )
+
+        ticket.status = 'in_progress'
+        ticket.save(update_fields=['status'])
 
 
     @action(detail=True, methods=['patch'])
@@ -125,13 +155,10 @@ class AdminTicketViewSet(viewsets.ModelViewSet):
     def set_status(self, request, pk=None):
         ticket = self.get_object()
         status_value = request.data.get('status')
-
         if status_value not in dict(Ticket.STATUS_CHOICES):
             return Response({'error': 'Неверный статус'}, status=status.HTTP_400_BAD_REQUEST)
-
         ticket.status = status_value
         ticket.save()
-
         return Response({'status': ticket.status}, status=status.HTTP_200_OK)
 
 
@@ -149,6 +176,21 @@ class MessageViewSet(viewsets.ModelViewSet):
             return Message.objects.filter(ticket_id=ticket_id)
 
         return Message.objects.filter(ticket_id=ticket_id, is_deleted=False)
+    
+    def update_ticket_status(self, ticket):
+        # Получаем последнее неудалённое сообщение
+        last_message = ticket.messages.filter(is_deleted=False).order_by('-created_at').first()
+        if not last_message:
+            ticket.status = 'open'
+            ticket.save(update_fields=['status'])
+            return
+
+        if last_message.sender_type == 'user':
+            ticket.status = 'open'
+        elif last_message.sender_type in ['staff', 'ai']:
+            ticket.status = 'in_progress'
+
+        ticket.save(update_fields=['status'])
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -161,19 +203,13 @@ class MessageViewSet(viewsets.ModelViewSet):
             author=author,
             sender_type=sender_type
         )
-
         ticket = message.ticket
+        self.update_ticket_status(ticket)
+        
 
         if sender_type == 'user':
-            ticket.status = 'open'
-            ticket.save(update_fields=['status'])
-
             # Запускаем ИИ в фоне
             executor.submit(run_async_in_thread, self.generate_and_save_ai_reply, message.text, ticket.id)
-
-        elif sender_type == 'staff':
-            ticket.status = 'in_progress'
-            ticket.save(update_fields=['status'])
 
     def generate_and_save_ai_reply(self, prompt, ticket_id):
         ai_response = generate_ai_response(prompt, ticket_id)
@@ -184,15 +220,18 @@ class MessageViewSet(viewsets.ModelViewSet):
             sender_type='ai'
         )
 
-        ticket.status = 'in_progress'
-        ticket.save(update_fields=['status'])
+        self.update_ticket_status(ticket)
 
     def perform_update(self, serializer):
         allowed_fields = {'is_deleted'}
         data = self.request.data
-
         for field in data:
             if field not in allowed_fields:
                 raise PermissionDenied(f"Поле '{field}' нельзя редактировать")
+        
+        instance = self.get_object()
+        is_deleted = data.get('is_deleted', False)
+        serializer.save(is_deleted=is_deleted)
 
-        serializer.save()
+        # После сохранения, обновляем статус тикета
+        self.update_ticket_status(instance.ticket)

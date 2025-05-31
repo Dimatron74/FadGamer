@@ -21,17 +21,14 @@
           <span class="font-medium">Автор: {{ ticket.user?.nickname || '—' }}</span>
           <span class="text-mywhite-2">UID: {{ ticket.user?.uid || '—' }}</span>
         </div>
-
         <div class="mt-2 flex flex-wrap items-center gap-4 text-sm">
           <span class="font-medium">Сервис: {{ ticket.service_name }}</span>
           <span class="text-mywhite-2">Категория: {{ ticket.category_name }}</span>
-          
           <!-- Статус -->
           <span :class="statusClass()" class="px-3 py-1 rounded-full text-xs font-medium ml-auto">
             {{ statusText() }}
           </span>
           <span class="text-mywhite-1">ID: {{ ticket.id }}</span>
-
           <!-- Кнопка только для закрытия -->
           <button
             v-if="ticket.status !== 'closed'"
@@ -41,13 +38,12 @@
             Закрыть запрос
           </button>
         </div>
-
         <div class="border-t border-myblack-4 mt-6"></div>
       </div>
 
-      <!-- Чат -->
-      <div class="max-w-4xl mx-auto space-y-6">
-        <div v-for="(msg, index) in messagesWithFirstMessage" :key="index" class="flex flex-col">
+      <!-- Чат с прокруткой -->
+      <div class="max-w-4xl mx-auto h-[60vh] overflow-y-auto pr-2 chat-container" ref="chatContainer">
+        <div v-for="(msg, index) in messagesWithFirstMessage" :key="index" class="flex flex-col mb-4">
           <!-- Первое сообщение (описание тикета) -->
           <div v-if="index === 0" class="w-full md:w-8/12 self-start">
             <div class="relative bg-myblack-3 rounded-lg p-4 mb-1">
@@ -74,7 +70,6 @@
             <div v-if="msg.sender_type == 'ai'" class="text-right text-xs text-mywhite-1 pr-2 mb-1">
               Искусственный Интеллект Qwen3
             </div>
-
             <!-- Тело сообщения -->
             <div
               class="bg-mypurple-4 text-white rounded-lg p-4 mb-1"
@@ -82,7 +77,6 @@
             >
               <p class="whitespace-pre-line">{{ msg.text }}</p>
             </div>
-
             <!-- Время и действия -->
             <div class="text-xs text-mywhite-1 text-right pr-2 mt-1">
               <span>{{ formatTime(msg.created_at) }}</span>
@@ -121,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { useRoute } from 'vue-router'
 import ticketService from '@/services/ticketService'
 
@@ -134,6 +128,8 @@ const error = ref(null)
 const ticket = ref(null)
 const messages = ref([])
 const newMessage = ref('')
+const chatContainer = ref(null)
+let pollingInterval = ref(null)
 
 // ==== Получение данных ====
 async function fetchTicketAndMessages() {
@@ -142,7 +138,6 @@ async function fetchTicketAndMessages() {
       ticketService.getAdminTicket(ticketId),
       ticketService.getAdminMessages(ticketId)
     ])
-
     ticket.value = ticketRes.data
     messages.value = messagesRes.data
   } catch (err) {
@@ -150,22 +145,27 @@ async function fetchTicketAndMessages() {
     error.value = 'Не удалось загрузить данные тикета'
   } finally {
     loading.value = false
+    await nextTick()
+    scrollToBottom()
   }
 }
 
-onMounted(fetchTicketAndMessages)
+onMounted(async () => {
+  await fetchTicketAndMessages()
+  await refreshTicketStatus()
+  await nextTick()
+  scrollToBottom()
+})
 
 // ==== Вычисляемые свойства ====
 const messagesWithFirstMessage = computed(() => {
   if (!ticket.value || !ticket.value.description) return []
-
   const firstMessage = {
     sender_type: 'user',
     text: ticket.value.description,
     created_at: ticket.value.created_at,
     is_deleted: false
   }
-
   return [firstMessage, ...(messages.value || [])]
 })
 
@@ -202,17 +202,20 @@ function formatTime(time) {
 // ==== Отправка сообщения ====
 async function sendMessage() {
   if (!newMessage.value.trim()) return
-
   try {
     const res = await ticketService.sendMessage(ticketId, {
       text: newMessage.value.trim(),
       sender_type: 'staff'
     })
-
     // Добавляем новое сообщение в список
     messages.value.push(res.data)
     newMessage.value = ''
-    await autoUpdateStatus()
+    await nextTick()
+    scrollToBottom()
+    await refreshTicketStatus()
+
+    // Запускаем опрос сервера на наличие ответа ИИ
+    startPolling()
   } catch (err) {
     console.error('Ошибка при отправке сообщения:', err)
     alert('Не удалось отправить сообщение')
@@ -236,41 +239,74 @@ async function deleteMessage(messageId) {
     messages.value = messages.value.map(msg =>
       msg.id === messageId ? { ...msg, is_deleted: true } : msg
     )
-    await autoUpdateStatus()
+    await refreshTicketStatus()
   } catch (err) {
     alert('Ошибка при удалении сообщения')
     console.error(err)
   }
 }
 
-const lastSenderType = computed(() => {
-  if (messages.value.length === 0) return null
-  return messages.value[messages.value.length - 1]?.sender_type
-})
-
-onMounted(async () => {
-  await fetchTicketAndMessages()
-  autoUpdateStatus()
-})
-
-function autoUpdateStatus() {
-  // Получаем список всех сообщений без описания
-  const validMessages = messages.value.filter(msg => !msg.is_deleted)
-
-  // Последнее непрочитанное сообщение
-  const lastValidMessage = [...validMessages].pop()
-
-  if (!lastValidMessage && ticket.value.status !== 'closed') {
-    changeStatus('open')
-    return
-  }
-
-  const senderType = lastValidMessage?.sender_type
-
-  if (senderType === 'user' && ticket.value.status !== 'closed') {
-    changeStatus('open')
-  } else if (['staff', 'ai'].includes(senderType) && ticket.value.status !== 'closed') {
-    changeStatus('in_progress')
+// ==== Прокрутка вниз ====
+function scrollToBottom() {
+  const container = chatContainer.value
+  if (container) {
+    container.scrollTop = container.scrollHeight
   }
 }
+
+// ==== Опрос сервера на наличие новых сообщений ====
+async function pollForNewMessages() {
+  try {
+    const res = await ticketService.getAdminMessages(ticketId)
+    const latestMessages = res.data.filter(msg => !msg.is_deleted)
+    if (latestMessages.length > messages.value.length) {
+      messages.value = latestMessages
+      await nextTick()
+      scrollToBottom()
+      await refreshTicketStatus()
+    }
+  } catch (err) {
+    console.error('Ошибка при опросе новых сообщений:', err)
+  }
+}
+
+function startPolling() {
+  stopPolling()
+  pollingInterval.value = setInterval(pollForNewMessages, 8000)
+}
+
+function stopPolling() {
+  if (pollingInterval.value) {
+    clearInterval(pollingInterval.value)
+    pollingInterval.value = null
+  }
+}
+
+// ==== Обновление статуса ====
+async function refreshTicketStatus() {
+  try {
+    const res = await ticketService.getTicket(ticketId)
+    ticket.value.status = res.data.status
+  } catch (err) {
+    console.error('Ошибка при обновлении статуса:', err)
+  }
+}
+
+// ==== Очистка при размонтировании ====
+onBeforeUnmount(() => {
+  stopPolling()
+})
 </script>
+
+<style scoped>
+.chat-container::-webkit-scrollbar {
+  width: 6px;
+}
+.chat-container::-webkit-scrollbar-track {
+  background: #1f1f1f;
+}
+.chat-container::-webkit-scrollbar-thumb {
+  background: #5e5e5e;
+  border-radius: 3px;
+}
+</style>

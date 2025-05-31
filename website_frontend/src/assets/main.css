@@ -1,3 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ваши кастомные стили */
+input[type="datetime-local"] {
+  @apply bg-myblack-2 text-mywhite-3 border border-myblack-4 rounded p-2;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from ..profiles.models import User
 from ..support.models import Service
 
@@ -46,6 +47,7 @@ class PromoCode(models.Model):
     )
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     expires_at = models.DateTimeField('Дата истечения', null=True, blank=True)
+    max_activations = models.PositiveIntegerField('Количество активаций', null=True, blank=True)
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -60,6 +62,14 @@ class PromoCode(models.Model):
     class Meta:
         verbose_name = 'Промокод'
         verbose_name_plural = 'Промокоды'
+
+    def save(self, *args, **kwargs):
+        # Если статус "inactive", и created_at ещё не задан — можно оставить None
+        if self.status == 'inactive' and not self.created_at:
+            pass  # может быть установлено вручную
+        elif not self.id:  # новая запись
+            self.created_at = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class PromoCodeBonus(models.Model):
