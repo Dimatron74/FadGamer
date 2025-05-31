@@ -4,7 +4,7 @@ from pathlib import Path
 from llama_cpp import Llama
 import re
 from .rag.retriever import retrieve_relevant_documents
-from .models import Message, Ticket
+from ..support.models import Message, Ticket
 
 # Путь к модели
 MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "Qwen3-1.7B-UD-Q8_K_XL.gguf"

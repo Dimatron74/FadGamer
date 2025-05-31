@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from django.core.exceptions import PermissionDenied
 from .models import Service, Category, Ticket, Message
 from django.db.models import Case, When, Value, IntegerField, DateTimeField, F, Q
-from .ai_model import generate_ai_response
+from ..ai_system.ai_model import generate_ai_response
 from django.db import transaction
 import asyncio
 from concurrent.futures import ThreadPoolExecutor

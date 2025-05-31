@@ -60,16 +60,18 @@ def load_knowledge_base():
 def build_index():
     questions, answers = load_knowledge_base()
 
-    print("Генерируем эмбеддинги...")
-    embeddings = np.vstack([text_to_embedding(q) for q in questions])
+    if INDEX_PATH.exists():
+        print("Загружаем существующий FAISS индекс...")
+        index = faiss.read_index(str(INDEX_PATH))
+    else:
+        print("Генерируем эмбеддинги...")
+        embeddings = np.vstack([text_to_embedding(q) for q in questions])
+        print("Создаем FAISS индекс...")
+        dimension = embeddings.shape[1]
+        index = faiss.IndexFlatIP(dimension)  # Inner Product вместо L2
+        index.add(embeddings)
+        # Сохраняем индекс
+        faiss.write_index(index, str(INDEX_PATH))
+        print("Индекс создан и сохранён.")
 
-    print("Создаем FAISS индекс...")
-    dimension = embeddings.shape[1]
-    index = faiss.IndexFlatIP(dimension)  # Inner Product вместо L2
-    index.add(embeddings)
-
-    # Сохраняем индекс
-    faiss.write_index(index, str(INDEX_PATH))
-
-    print("Индекс создан и сохранён.")
     return index, questions, answers

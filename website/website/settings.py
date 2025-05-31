@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.news',
     'apps.profiles',
     'apps.support',
+    'apps.ai_system',
     'compressor',
     'corsheaders',
     'guardian',
