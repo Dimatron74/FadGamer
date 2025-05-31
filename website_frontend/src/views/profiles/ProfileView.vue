@@ -1,5 +1,6 @@
 <script setup>
 import SupportTicketList from '@/components/support/SupportTicketList.vue'
+import PromoCodeActivation from '@/components/profiles/PromoCodeActivation.vue'
 import { ref, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -154,19 +155,7 @@ function scrollToTop() {
         <!-- Промокод -->
         <div v-if="activeTab === 'promo'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
           <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Активировать промокод</h2>
-          <form class="space-y-4">
-            <input
-              type="text"
-              placeholder="Введите промокод"
-              class="w-full bg-myblack-2 text-mywhite-4 placeholder-mywhite-2 border-none rounded-md px-4 py-2 focus:ring-2 focus:ring-mypurple-4"
-            />
-            <button
-              type="submit"
-              class="w-full bg-mypurple-4 hover:bg-mypurple-3 text-white font-bold py-2 px-4 rounded"
-            >
-              Активировать
-            </button>
-          </form>
+          <PromoCodeActivation />
         </div>
 
         <!-- Техподдержка -->

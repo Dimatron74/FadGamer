@@ -50,5 +50,8 @@ export default {
   },
   getBonusTypes() {
     return apiClient.get('/admin_panel/promocodes/bonus_types/')
+  },
+  activatePromoCode(data) {
+    return apiClient.post('/admin_panel/promocodes/activate/', data)
   }
 }

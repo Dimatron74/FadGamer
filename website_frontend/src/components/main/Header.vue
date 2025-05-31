@@ -14,7 +14,6 @@
         <div @click="toggleDropdown" class="relative z-10">
           <span class="cursor-pointer hover:text-mywhite-5">{{ $t('navigation.other') }}</span>
           <div v-if="dropdownOpen" class="absolute bg-myblack-2 shadow-lg mt-2">
-            <RouterLink to="/promo" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.promo') }}</RouterLink>
             <RouterLink to="/about" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.about') }}</RouterLink>
             <RouterLink to="" class="block px-4 py-2 text-mywhite-3 hover:bg-myblack-3" @click="scrollToTop">{{ $t('navigation.contact') }}</RouterLink>
           </div>

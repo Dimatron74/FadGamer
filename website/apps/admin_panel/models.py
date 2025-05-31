@@ -47,7 +47,8 @@ class PromoCode(models.Model):
     )
     created_at = models.DateTimeField('Дата создания', auto_now_add=True)
     expires_at = models.DateTimeField('Дата истечения', null=True, blank=True)
-    max_activations = models.PositiveIntegerField('Количество активаций', null=True, blank=True)
+    max_activations = models.PositiveIntegerField('Макисмальное количество активаций', null=True, blank=True)
+    activations_promo = models.PositiveIntegerField('Количество активаций', null=True, blank=True)
     author = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
