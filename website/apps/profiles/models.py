@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group
 from phonenumber_field.modelfields import PhoneNumberField
+from ..main.models import Products
 
 
 
@@ -86,6 +87,26 @@ class UserService(models.Model):
 
     def __str__(self):
         return f'{self.user.nickname} - {self.service.name}'
+    
+class UserProducts(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    is_blocked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+
+    DISTRIBUTION_CHOICES = [
+        ('pay', 'Платная лицензия'),
+        ('free', 'Бесплатная лицензия'),
+        ('none', 'Без модели'),
+    ]
+    distribution_model = models.CharField(max_length=50, choices=DISTRIBUTION_CHOICES, default='none')
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f'{self.user.nickname} - {self.product.name}'
 
 class AccountLock(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="locked_accounts")
@@ -111,7 +132,7 @@ class UIDCounter(models.Model):
 
 def generate_uid(server_prefix="1"):
     sequence = UIDCounter.get_next_uid(server_prefix)
-    return f"{server_prefix}{sequence:08d}"
+    return f"{server_prefix}{sequence:010d}"
 
 
 
@@ -119,7 +140,7 @@ def generate_uid(server_prefix="1"):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    uid = models.CharField(max_length=10, primary_key=True, unique=True, editable=False)
+    uid = models.CharField(max_length=12, primary_key=True, unique=True, editable=False)
     nickname = models.CharField(unique=True, max_length=255)
     password = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)

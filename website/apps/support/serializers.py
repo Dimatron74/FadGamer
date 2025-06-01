@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Service, Category, Ticket, Message, MessageAttachment
+from .models import Products, Category, Ticket, Message, MessageAttachment
 # from ..profiles.models import User
 from django.contrib.auth import get_user_model
 from django.db.models import Count
@@ -8,7 +8,7 @@ User = get_user_model()
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Service
+        model = Products
         fields = ['id', 'name', 'slug', 'description']
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -48,7 +48,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class TicketSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
-    service = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all())
+    service = serializers.PrimaryKeyRelatedField(queryset=Products.objects.all())
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     service_name = serializers.CharField(source='service.name', read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)

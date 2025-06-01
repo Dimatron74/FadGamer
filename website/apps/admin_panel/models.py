@@ -4,7 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from ..profiles.models import User
-from ..support.models import Service
+from ..main.models import Products
 
 
 class BonusType(models.Model):
@@ -40,7 +40,7 @@ class PromoCode(models.Model):
     code = models.CharField('Промокод', max_length=50, unique=True)
     status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='active')
     service = models.ForeignKey(
-        Service,
+        Products,
         on_delete=models.CASCADE,
         related_name='promocodes',
         verbose_name='Сервис/игра'

@@ -4,28 +4,14 @@ from django.conf import settings
 from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from ..main.models import Products
 
-
-
-# ==== Сервисы====
-# позже изменить на Продукты, чтобы избежать путаницы с Сервисами авторизации в профиле
-class Service(models.Model):
-    name = models.CharField('Название', max_length=100)
-    slug = models.SlugField('Slug', unique=True)
-    description = models.TextField('Описание', blank=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Сервис'
-        verbose_name_plural = 'Сервисы'
 
 
 # ==== Категории запросов ====
 class Category(models.Model):
     service = models.ForeignKey(
-        Service,
+        Products,
         on_delete=models.CASCADE,
         related_name='categories',
         verbose_name='Сервис'
@@ -58,7 +44,7 @@ class Ticket(models.Model):
         verbose_name='Пользователь'
     )
     service = models.ForeignKey(
-        Service,
+        Products,
         on_delete=models.SET_NULL,
         null=True,
         related_name='tickets',

@@ -4,7 +4,7 @@ from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.core.exceptions import PermissionDenied
-from .models import Service, Category, Ticket, Message
+from .models import Products, Category, Ticket, Message
 from django.db.models import Case, When, Value, IntegerField, DateTimeField, F, Q
 from ..ai_system.ai_model import generate_ai_response
 from django.db import transaction
@@ -28,7 +28,7 @@ def run_async_in_thread(func, *args):
 
 # ==== Read-only views ====
 class ServiceViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Service.objects.all()
+    queryset = Products.objects.all()
     serializer_class = ServiceSerializer
 
 

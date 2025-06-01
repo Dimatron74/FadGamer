@@ -3,7 +3,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import PromoCode, Service, BonusType, UserPromoCodeActivation
+from .models import PromoCode, Products, BonusType, UserPromoCodeActivation
 from .serializers import PromoCodeSerializer, ServiceSerializer, BonusTypeSerializer
 from django.shortcuts import get_object_or_404
 
@@ -15,7 +15,7 @@ class PromoCodeViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def services(self, request):
         """Получить список всех сервисов (игр)"""
-        services = Service.objects.all()
+        services = Products.objects.all()
         serializer = ServiceSerializer(services, many=True)
         return Response(serializer.data)
     

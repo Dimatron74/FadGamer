@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from .models import PromoCode, PromoCodeBonus, BonusType, UserPromoCodeActivation
-from ..support.models import Service
+from ..support.models import Products
 from ..profiles.models import User
 from django.utils import timezone
 
@@ -28,7 +28,7 @@ class PromoCodeBonusSerializer(serializers.ModelSerializer):
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Service
+        model = Products
         fields = ['id', 'name']
 
 
@@ -36,7 +36,7 @@ class PromoCodeSerializer(serializers.ModelSerializer):
     bonuses = PromoCodeBonusSerializer(many=True)
     service = ServiceSerializer(read_only=True)
     service_id = serializers.PrimaryKeyRelatedField(
-        queryset=Service.objects.all(),
+        queryset=Products.objects.all(),
         source='service',
         write_only=True
     )
