@@ -73,7 +73,7 @@ class UserTicketViewSet(viewsets.ModelViewSet):
                 default=None,
                 output_field=DateTimeField()
             ).desc(nulls_last=True),
-        )
+        ).filter(user=self.request.user)
 
     @transaction.atomic
     def perform_create(self, serializer):
