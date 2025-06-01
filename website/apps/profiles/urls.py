@@ -2,7 +2,7 @@
 
 from django.urls import path
 from . import views, api, serializers
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenRefreshView
 
 
 
@@ -10,6 +10,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 urlpatterns = [
     path("signup/", api.signup, name="signup"),
     path("me/", api.me, name="me"),
+    path("profile/", api.update_profile, name="update_profile"),
+    path("avatar/upload/", api.upload_avatar, name="upload_avatar"),
 
     path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain'),
     # path('login/', TokenObtainPairView.as_view(), name='token_obtain'),

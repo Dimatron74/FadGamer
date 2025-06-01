@@ -14,22 +14,18 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class MyTokenObtainPairView(APIView):
     permission_classes = []
-    authentication_classes = [JWTAuthentication]
-    serializer_class = MyTokenObtainPairSerializer
+    authentication_classes = []
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            # Обработка валидных данных
-            email = serializer.validated_data['email']
-            user_email = UserEmail.objects.get(email__email=email)
-            user = user_email.user
-            token = MyTokenObtainPairSerializer.get_token(user)
-            # return Response({'refresh': str(token), 'access': str(token.access_token)}, status=status.HTTP_200_OK)
-            return Response(token, status=status.HTTP_200_OK)
-        else:
-            # Обработка невалидных данных
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, *args, **kwargs):
+        serializer = MyTokenObtainPairSerializer(data=request.data)
+
+        try:
+            if serializer.is_valid(raise_exception=False):
+                return Response(serializer.validated_data, status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         
 
 

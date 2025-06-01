@@ -150,6 +150,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not self.groups.filter(name=default_role.name).exists():
             self.groups.add(default_role.group)
 
+    def get_active_email(self):
+        userEmail = self.useremail_set.filter(is_active=True).first()
+        return userEmail.email.email if userEmail else None
+
     def __str__(self):
         return f"{self.nickname} ({self.uid})"
 
