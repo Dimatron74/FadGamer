@@ -3,6 +3,8 @@
 <script setup>
 import SupportTicketList from '@/components/support/SupportTicketList.vue'
 import PromoCodeActivation from '@/components/profiles/PromoCodeActivation.vue'
+import AccountSettings from '@/components/profiles/AccountSettings.vue'
+import AvatarEdit from '@/components/profiles/AvatarEdit.vue'
 import { ref, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -85,9 +87,7 @@ function scrollToTop() {
       >
         <!-- Фото профиля -->
         <div class="flex justify-center mb-4">
-          <div class="w-20 h-20 rounded-full overflow-hidden bg-myblack-5 flex items-center justify-center">
-            <span class="text-mywhite-1 text-2xl font-semibold"> {{ userStore.user.name?.charAt(0) || '?' }} </span>
-          </div>
+          <AvatarEdit />
         </div>
 
         <!-- Никнейм и UID -->
@@ -128,24 +128,7 @@ function scrollToTop() {
       <div class="lg:col-span-3 space-y-6">
         <!-- Учётная запись -->
         <div v-if="activeTab === 'account'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Учётная запись</h2>
-          <div class="space-y-4">
-            <div>
-              <label class="block text-mywhite-2 text-sm mb-1">Email</label>
-              <div class="flex items-center justify-between">
-                <p class="text-mywhite-4">{{ userStore.user.email }}</p>
-                <button class="text-mypurple-5 hover:text-mypurple-2 text-sm underline">Изменить</button>
-              </div>
-            </div>
-            <hr class="border-myblack-2" />
-            <div>
-              <label class="block text-mywhite-2 text-sm mb-1">Пароль</label>
-              <div class="flex items-center justify-between">
-                <p class="text-mywhite-4">•••••••••••</p>
-                <button class="text-mypurple-4 hover:text-mypurple-2 text-sm">Изменить</button>
-              </div>
-            </div>
-          </div>
+          <AccountSettings />
         </div>
 
         <!-- Игры -->
