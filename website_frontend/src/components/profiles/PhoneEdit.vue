@@ -1,7 +1,7 @@
 <!-- src/components/profiles/PhoneEdit.vue -->
 
 <template>
-  <div class="bg-myblack-4 p-4 rounded-lg space-y-2">
+  <div class="bg-myblack-3 p-4 rounded-lg space-y-2">
     <!-- Заголовок и кнопка -->
     <div class="flex justify-between items-center">
       <p class="text-mywhite-2">Телефон</p>
@@ -27,7 +27,7 @@
         inputmode="numeric"
         pattern="[0-9+\s\-\(\)]*"
         maxlength="20"
-        class="w-full px-3 py-2 bg-myblack-5 border border-myblack-2 rounded text-white"
+        class="w-full px-3 py-2 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded"
         :class="{ 'border-red-500': errorMessage }"
       />
 

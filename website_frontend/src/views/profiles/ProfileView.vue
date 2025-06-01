@@ -155,7 +155,7 @@ function scrollToTop() {
 
           <!-- Кнопка "Посмотреть все" -->
           <div class="mt-6 text-right">
-            <RouterLink to="/profile/support" class="text-mypurple-4 hover:text-mypurple-3 font-medium" @click="scrollToTop">
+            <RouterLink to="/profile/support" class="text-mypurple-5 hover:text-mypurple-3 font-medium" @click="scrollToTop">
               Посмотреть все запросы →
             </RouterLink>
           </div>

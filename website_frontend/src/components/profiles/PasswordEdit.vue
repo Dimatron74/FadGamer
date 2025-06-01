@@ -1,7 +1,7 @@
 <!-- src/components/profiles/PasswordEdit.vue -->
 
 <template>
-  <div class="bg-myblack-4 p-4 rounded-lg space-y-2">
+  <div class="bg-myblack-3 p-4 rounded-lg space-y-2">
     <!-- Заголовок и кнопка -->
     <div class="flex justify-between items-center">
       <p class="text-mywhite-2">Пароль</p>
@@ -21,7 +21,7 @@
           v-model="oldPassword" 
           :type="showOldPassword ? 'text' : 'password'" 
           placeholder="Старый пароль" 
-          class="w-full px-3 py-2 bg-myblack-5 border border-myblack-2 rounded text-white"
+          class="w-full px-3 py-2 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded"
           :class="{ 'border-red-500': errors.old_password }"
         />
         <button 
@@ -39,7 +39,7 @@
           v-model="newPassword" 
           :type="showNewPassword ? 'text' : 'password'" 
           placeholder="Новый пароль" 
-          class="w-full px-3 py-2 bg-myblack-5 border border-myblack-2 rounded text-white"
+          class="w-full px-3 py-2 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded"
           :class="{ 'border-red-500': errors.new_password }"
         />
         <button 
@@ -57,7 +57,7 @@
           v-model="repeatPassword" 
           :type="showRepeatPassword ? 'text' : 'password'" 
           placeholder="Повторите пароль" 
-          class="w-full px-3 py-2 bg-myblack-5 border border-myblack-2 rounded text-white"
+          class="w-full px-3 py-2 bg-myblack-2 border border-myblack-4 text-mywhite-3 rounded"
           :class="{ 'border-red-500': errors.repeat_password }"
         />
         <button 

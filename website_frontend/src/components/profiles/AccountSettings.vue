@@ -1,12 +1,41 @@
 <!-- components/profiles/AccountSettings.vue -->
 <template>
-  <div class="space-y-6">
-    <EmailEdit />
-    <PasswordEdit />
-    <NicknameEdit />
-    <PhoneEdit />
-    <BirthDateEdit />
-    <NotificationEdit />
+  <div class="space-y-3">
+    <!-- Заголовок секции -->
+    <div>
+      <h2 class="text-xl font-semibold text-mywhite-5 mb-1">Общие данные</h2>
+      <p class="text-sm text-mywhite-2">Основные данные о вашем аккаунте</p>
+    </div>
+
+    <!-- Подраздел: Личные данные -->
+    <div class="bg-myblack-3 p-6 rounded-lg shadow-md border border-myblack-3 space-y-6">
+      <NicknameEdit />
+      <EmailEdit />
+      <PhoneEdit />
+      <BirthDateEdit />
+    </div>
+
+    <!-- Заголовок секции -->
+    <div>
+      <h2 class="text-xl font-semibold text-mywhite-5 mb-1">Безопасность</h2>
+      <p class="text-sm text-mywhite-2">Изменение пароля и другие меры безопасности</p>
+    </div>
+
+    <!-- Подраздел: Безопасность -->
+    <div class="bg-myblack-3 p-6 rounded-lg shadow-md border border-myblack-3 space-y-6">
+      <PasswordEdit />
+    </div>
+
+    <!-- Заголовок секции -->
+    <div>
+      <h2 class="text-xl font-semibold text-mywhite-5 mb-1">Настройки уведомлений</h2>
+      <p class="text-sm text-mywhite-2">Выберите тип получаемых уведомлений</p>
+    </div>
+
+    <!-- Подраздел: Уведомления -->
+    <div class="bg-myblack-3 p-6 rounded-lg shadow-md border border-myblack-3">
+      <NotificationEdit />
+    </div>
   </div>
 </template>
 
