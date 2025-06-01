@@ -1,3 +1,5 @@
+<!-- ProfileView.vue -->
+
 <script setup>
 import SupportTicketList from '@/components/support/SupportTicketList.vue'
 import PromoCodeActivation from '@/components/profiles/PromoCodeActivation.vue'

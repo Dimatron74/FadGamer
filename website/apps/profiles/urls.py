@@ -1,3 +1,5 @@
+# profiles/urls.py
+
 from django.urls import path
 from . import views, api, serializers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView

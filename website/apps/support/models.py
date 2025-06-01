@@ -7,7 +7,8 @@ from django.dispatch import receiver
 
 
 
-# ==== Сервисы ====
+# ==== Сервисы====
+# позже изменить на Продукты, чтобы избежать путаницы с Сервисами авторизации в профиле
 class Service(models.Model):
     name = models.CharField('Название', max_length=100)
     slug = models.SlugField('Slug', unique=True)

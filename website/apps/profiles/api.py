@@ -1,3 +1,5 @@
+# profiles/api.py
+
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from .forms import SignupForm
