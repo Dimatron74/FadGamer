@@ -39,7 +39,8 @@ def me(request):
             'uid': user.uid,
             'email': active_email_entry.email.email,
             'name': user.nickname,
-            'is_staff': user.is_staff
+            'is_staff': user.is_staff,
+            'birth_date': user.birth_date.isoformat() if user.birth_date else None
         })
 
     except AuthenticationFailed as e:

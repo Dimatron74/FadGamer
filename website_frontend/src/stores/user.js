@@ -14,6 +14,7 @@ export const useUserStore = defineStore('user', () => {
         refresh: null,
         access: null,
         is_staff: false,
+        birth_date: null,
     })
 
     const token = ref(localStorage.getItem('token') || null)
@@ -31,6 +32,7 @@ export const useUserStore = defineStore('user', () => {
             user.value.name = localStorage.getItem('user.name')
             user.value.is_staff = JSON.parse(localStorage.getItem('user.is_staff') || 'false')
             user.value.refresh = localStorage.getItem('user.refresh')
+            user.value.birth_date = localStorage.getItem('user.birth_date') || null
 
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + access
 
@@ -61,6 +63,7 @@ export const useUserStore = defineStore('user', () => {
         user.value.email = null
         user.value.name = null
         user.value.is_staff = false
+        user.value.birth_date = null
 
         const keys = Object.keys(localStorage)
         keys.forEach(key => {
@@ -79,11 +82,13 @@ export const useUserStore = defineStore('user', () => {
         user.value.email = userInfo.email
         user.value.name = userInfo.name
         user.value.is_staff = Boolean(userInfo.is_staff)
+        user.value.birth_date = userInfo.birth_date
 
         localStorage.setItem('user.uid', user.value.uid)
         localStorage.setItem('user.email', user.value.email)
         localStorage.setItem('user.name', user.value.name)
         localStorage.setItem('user.is_staff', user.value.is_staff)
+        localStorage.setItem('user.birth_date', user.value.birth_date || '')
 
         console.log('User: ', user.value)
     }
