@@ -13,7 +13,10 @@ from rest_framework import status
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from .models import User, UserEmail, Email
+import io
+from PIL import Image
 
 
 @api_view(['GET'])
@@ -40,7 +43,10 @@ def me(request):
             'email': active_email_entry.email.email,
             'name': user.nickname,
             'is_staff': user.is_staff,
-            'birth_date': user.birth_date.isoformat() if user.birth_date else None
+            'birth_date': user.birth_date.isoformat() if user.birth_date else None,
+            'phone_number': str(user.phone_number) if user.phone_number else None,
+            'notification_type': user.notification_type,
+            'avatar': request.build_absolute_uri(user.avatar.url) if user.avatar else None,
         })
 
     except AuthenticationFailed as e:
@@ -95,9 +101,27 @@ def update_profile(request):
     if 'birth_date' in data:
         user.birth_date = data['birth_date']
 
+    # Обновление типа уведомлений
+    if 'notification_type' in data:
+        notification_type = data['notification_type']
+
+        valid_choices = dict(User.NOTIFICATION_CHOICES).keys()
+        if notification_type not in valid_choices:
+            return Response({
+                'error': 'Некорректный тип уведомления'
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user.notification_type = notification_type
+
     # Обновление телефона
     if 'phone_number' in data:
-        user.phone_number = data['phone_number']
+        raw_phone = data['phone_number']
+
+        try:
+            # Просто присваиваем строковое значение
+            user.phone_number = raw_phone  # PhoneNumberField сам валидирует и нормализует
+        except Exception as e:
+            return Response({'error': 'Неверный формат телефона'}, status=status.HTTP_400_BAD_REQUEST)
 
     # Смена пароля
     if 'old_password' in data and 'new_password' in data:
@@ -160,6 +184,7 @@ def update_profile(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def upload_avatar(request):
     user = request.user
     avatar = request.FILES.get('avatar')
@@ -167,10 +192,46 @@ def upload_avatar(request):
     if not avatar:
         return Response({'error': 'Файл не загружен'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Сохраняем файл
-    file_name = f'avatars/{user.uid}_{avatar.name}'
-    path = default_storage.save(file_name, ContentFile(avatar.read()))
+    # Проверяем, что это изображение
+    try:
+        original_image = Image.open(avatar).convert("RGBA")
+    except Exception:
+        return Response({'error': 'Загруженный файл не является изображением'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Масштабируем до максимального размера 512x512
+    max_size = (512, 512)
+    original_image.thumbnail(max_size, Image.LANCZOS)
+
+    # Создаём буфер в памяти для сжатого изображения
+    img_io = io.BytesIO()
+
+    # Сохраняем как WebP с компрессией
+    original_image.save(img_io, format='WEBP', quality=80, optimize=True, method=6)
+
+    # Закрываем исходное изображение, чтобы освободить ресурсы
+    original_image.close()
+
+    # Формируем новое имя файла
+    file_name = f'avatars/{user.uid}.webp'
+
+    # Создаём InMemoryUploadedFile из буфера
+    compressed_image = InMemoryUploadedFile(
+        img_io,
+        None,
+        f'{user.uid}.webp',
+        'image/webp',
+        img_io.tell(),
+        None
+    )
+
+    # Сохраняем в storage
+    path = default_storage.save(file_name, compressed_image)
+
+    # Обновляем аватар пользователя
     user.avatar = path
     user.save()
 
-    return Response({'message': 'Аватар успешно загружен', 'avatar_url': user.avatar.url})
+    return Response({
+        'message': 'Аватар успешно загружен',
+        'avatar_url': request.build_absolute_uri(user.avatar.url)
+    })

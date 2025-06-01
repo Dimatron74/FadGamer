@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_browser_reload',
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [

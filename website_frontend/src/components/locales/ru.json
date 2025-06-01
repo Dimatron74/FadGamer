@@ -46,6 +46,12 @@
     "profileuser": "Профиль пользователя",
     "nickname": "Никнейм",
     "email": "Email",
-    "edit_profile": "Редактировать профиль"
+    "edit_profile": "Редактировать профиль",
+    "notifications": {
+      "all": "Все уведомления",
+      "important_only": "Только важные уведомления",
+      "none": "Без уведомлений",
+      "unknown": "Не указано"
+    }
   }
 }

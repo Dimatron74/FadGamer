@@ -6,6 +6,7 @@
     <NicknameEdit />
     <PhoneEdit />
     <BirthDateEdit />
+    <NotificationEdit />
   </div>
 </template>
 
@@ -15,4 +16,5 @@ import PasswordEdit from './PasswordEdit.vue'
 import NicknameEdit from './NicknameEdit.vue'
 import PhoneEdit from './PhoneEdit.vue'
 import BirthDateEdit from './BirthDateEdit.vue'
+import NotificationEdit from './NotificationEdit.vue'
 </script>

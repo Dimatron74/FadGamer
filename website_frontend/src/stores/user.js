@@ -14,7 +14,10 @@ export const useUserStore = defineStore('user', () => {
         refresh: null,
         access: null,
         is_staff: false,
+        avatar: null,
         birth_date: null,
+        phone_number: null,
+        notification_type: 'all',
     })
 
     const token = ref(localStorage.getItem('token') || null)
@@ -33,6 +36,9 @@ export const useUserStore = defineStore('user', () => {
             user.value.is_staff = JSON.parse(localStorage.getItem('user.is_staff') || 'false')
             user.value.refresh = localStorage.getItem('user.refresh')
             user.value.birth_date = localStorage.getItem('user.birth_date') || null
+            user.value.phone_number = localStorage.getItem('user.phone_number') || null
+            user.value.notification_type = localStorage.getItem('user.notification_type') || 'all'
+            user.value.avatar = localStorage.getItem('user.avatar') || null
 
             axios.defaults.headers.common['Authorization'] = 'Bearer ' + access
 
@@ -64,6 +70,9 @@ export const useUserStore = defineStore('user', () => {
         user.value.name = null
         user.value.is_staff = false
         user.value.birth_date = null
+        user.value.phone_number = null
+        user.value.notification_type = 'all'
+        user.value.avatar = null
 
         const keys = Object.keys(localStorage)
         keys.forEach(key => {
@@ -83,12 +92,19 @@ export const useUserStore = defineStore('user', () => {
         user.value.name = userInfo.name
         user.value.is_staff = Boolean(userInfo.is_staff)
         user.value.birth_date = userInfo.birth_date
+        user.value.phone_number = userInfo.phone_number
+        user.value.notification_type = userInfo.notification_type
+        user.value.avatar = userInfo.avatar || null
+        
 
         localStorage.setItem('user.uid', user.value.uid)
         localStorage.setItem('user.email', user.value.email)
         localStorage.setItem('user.name', user.value.name)
         localStorage.setItem('user.is_staff', user.value.is_staff)
         localStorage.setItem('user.birth_date', user.value.birth_date || '')
+        localStorage.setItem('user.phone_number', user.value.phone_number || '')
+        localStorage.setItem('user.notification_type', user.value.notification_type)
+        localStorage.setItem('user.avatar', user.value.avatar || '')
 
         console.log('User: ', user.value)
     }

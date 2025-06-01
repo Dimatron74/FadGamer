@@ -3,6 +3,7 @@
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group
+from phonenumber_field.modelfields import PhoneNumberField
 
 
 
@@ -123,7 +124,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(null=True, max_length=20)
+    phone_number = PhoneNumberField(null=True, blank=True)
     is_blocked = models.BooleanField(default=False)
     registration_date = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)

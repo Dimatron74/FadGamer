@@ -6,7 +6,7 @@
       <span v-else class="text-mywhite-1 text-2xl font-semibold">{{ userStore.user.name?.charAt(0) || '?' }}</span>
     </div>
     <input type="file" accept="image/*" @change="onFileChange" ref="fileInput" hidden />
-    <button @click="$refs.fileInput.click()" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm">Сменить</button>
+    <button @click="$refs.fileInput.click()" class="absolute rounded-full inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity text-white text-sm">Сменить</button>
   </div>
 </template>
 
