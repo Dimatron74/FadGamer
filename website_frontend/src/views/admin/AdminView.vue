@@ -31,6 +31,13 @@ const menuItems = [
   { label: 'Посты', route: '/admin/posts', icon: '📝' },
   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
+  { label: 'База данных', route: '/admin/database', icon: '🎟️',
+    children: [
+      { label: 'Сервисы', route: '/admin/database/services' },
+      { label: 'Продукты', route: '/admin/database/products' },
+      { label: 'Игры', route: '/admin/database/games' }
+    ]
+  },
   {
     label: 'Статистика',
     icon: '📊',

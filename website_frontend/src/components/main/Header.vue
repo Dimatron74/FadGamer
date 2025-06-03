@@ -8,7 +8,7 @@
       </div>
       <nav class="items-center text-lg justify-between ml-[74px] tracking-wider gap-2 hidden tablet-max:flex desktop-min:gap-10">
         <RouterLink to="/" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.home') }}</RouterLink>
-        <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.games') }}</RouterLink>
+        <RouterLink to="/games" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.games') }}</RouterLink>
         <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.news') }}</RouterLink>
         <RouterLink to="/support" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.support') }}</RouterLink>
         <div @click="toggleDropdown" class="relative z-10">

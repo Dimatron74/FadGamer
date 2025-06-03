@@ -14,7 +14,8 @@ from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from .models import User, UserEmail, Email
+from .models import User, UserEmail, Email, UserProducts
+from .serializers import ProductUserSerializer
 import io
 from PIL import Image
 
@@ -235,3 +236,12 @@ def upload_avatar(request):
         'message': 'Аватар успешно загружен',
         'avatar_url': request.build_absolute_uri(user.avatar.url)
     })
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def get_user_products(request):
+    user = request.user
+    products = UserProducts.objects.filter(user=user).select_related('product', 'distribution_model')
+    serializer = ProductUserSerializer(products, many=True, context={'request': request})
+    return Response(serializer.data)

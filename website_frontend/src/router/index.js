@@ -14,6 +14,9 @@ import AdminSupportDetailView from '@/views/admin/AdminSupportDetailView.vue'
 import AdminPromoCodesCreateView from '@/views/admin/AdminPromoCodesCreateView.vue'
 import PromoCodeModal from '@/components/admin/PromoCodeModal.vue'
 import AdminPromoCodesView from '@/views/admin/AdminPromoCodesView.vue'
+import GamesView from '@/views/games/GamesView.vue'
+import GameDetailView from '@/views/games/GameDetailView.vue'
+
 import { noAuthMiddleware, authMiddleware } from './middleware/authMiddleware'
 import { adminMiddleware } from './middleware/adminMiddleware'
 
@@ -147,8 +150,18 @@ const router = createRouter({
           path: 'promocodes/:code',
           name: 'admin-promocode-detail',
           component: PromoCodeModal
-        }
+        },
       ]
+    },
+    {
+      path: '/games',
+      name: 'games',
+      component: GamesView
+    },
+    {
+      path: '/games/:slug',
+      name: 'game-detail',
+      component: GameDetailView
     }
   ],
 })

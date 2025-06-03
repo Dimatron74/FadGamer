@@ -32,6 +32,7 @@ class Service(models.Model):
     def __str__(self):
         return self.name
     
+# Где приобрести    
 class AcquisitionMethod(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='acquisition_methods')
     service = models.ForeignKey(Service, on_delete=models.CASCADE)

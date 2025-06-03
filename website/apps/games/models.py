@@ -27,7 +27,6 @@ class Game(Products):  # Наследуется от Product
     genres = models.ManyToManyField(Genre, related_name='games')
     platforms = models.ManyToManyField(Platform, related_name='games')
     features = models.ManyToManyField(Feature, related_name='games')
-    how_to_get = models.TextField('Как получить', blank=True)
     trailer_url = models.URLField('Ссылка на трейлер', blank=True)
 
     def __str__(self):

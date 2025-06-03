@@ -12,6 +12,7 @@ urlpatterns = [
     path("me/", api.me, name="me"),
     path("profile/", api.update_profile, name="update_profile"),
     path("avatar/upload/", api.upload_avatar, name="upload_avatar"),
+    path('products/', api.get_user_products, name='user-products'),
 
     path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain'),
     # path('login/', TokenObtainPairView.as_view(), name='token_obtain'),

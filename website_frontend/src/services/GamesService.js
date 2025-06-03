@@ -1,5 +1,4 @@
-// src/services/profileService.js
-
+// src/services/GamesService.js
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 
@@ -13,7 +12,6 @@ const apiClient = axios.create({
 // Перехватчик для добавления токена
 apiClient.interceptors.request.use(async config => {
   const userStore = useUserStore()
-
   // Если нет access-токена — пытаемся обновить его
   if (!userStore.user.access) {
     try {
@@ -23,27 +21,16 @@ apiClient.interceptors.request.use(async config => {
       return Promise.reject(e)
     }
   }
-
   // Добавляем заголовок авторизации
   config.headers.Authorization = `Bearer ${userStore.user.access}`
   return config
 })
 
 export default {
-  getProfile() {
-    return apiClient.get('/profiles/me/')
+  getGames() {
+    return apiClient.get('/games/')
   },
-  updateProfile(data) {
-    return apiClient.patch('/profiles/profile/', data)
-  },
-  uploadAvatar(formData) {
-    return apiClient.post('/profiles/avatar/upload/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })
-  },
-  getUserProducts() {
-    return apiClient.get('/profiles/products/')
+  getGame(slug) {
+    return apiClient.get(`/games/${slug}/`)
   }
 }

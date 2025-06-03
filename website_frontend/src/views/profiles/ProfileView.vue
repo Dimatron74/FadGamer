@@ -5,6 +5,7 @@ import SupportTicketList from '@/components/support/SupportTicketList.vue'
 import PromoCodeActivation from '@/components/profiles/PromoCodeActivation.vue'
 import AccountSettings from '@/components/profiles/AccountSettings.vue'
 import AvatarEdit from '@/components/profiles/AvatarEdit.vue'
+import UserProductsList from '@/components/profiles/UserProductsList.vue'
 import { ref, computed, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
@@ -133,8 +134,7 @@ function scrollToTop() {
 
         <!-- Игры -->
         <div v-if="activeTab === 'games'" class="bg-myblack-3 rounded-lg shadow-lg p-6">
-          <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Все игры</h2>
-          <p class="text-mywhite-3">Информация о ваших играх пока недоступна.</p>
+          <UserProductsList />
         </div>
 
         <!-- Промокод -->
