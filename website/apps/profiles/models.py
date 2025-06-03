@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group
 from phonenumber_field.modelfields import PhoneNumberField
-from ..main.models import Products
+from ..main.models import Products, Service
 
 
 
@@ -69,24 +69,25 @@ class UserEmail(models.Model):
     def __str__(self):
         return f'{self.user.nickname} - {self.email.email}'
 
-class Service(models.Model):
-    name = models.CharField(unique=True, max_length=255)
+# class UserService(models.Model):
+#     user = models.ForeignKey("User", on_delete=models.CASCADE)
+#     service = models.ForeignKey(Service, on_delete=models.CASCADE)
+#     is_active = models.BooleanField(default=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     class Meta:
+#         unique_together = ('user', 'service')
+
+#     def __str__(self):
+#         return f'{self.user.nickname} - {self.service.name}'
+    
+class Distributions(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
-
-class UserService(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        unique_together = ('user', 'service')
-
-    def __str__(self):
-        return f'{self.user.nickname} - {self.service.name}'
     
 class UserProducts(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
@@ -94,16 +95,12 @@ class UserProducts(models.Model):
     is_blocked = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(null=True, blank=True)
-
-    DISTRIBUTION_CHOICES = [
-        ('pay', 'Платная лицензия'),
-        ('free', 'Бесплатная лицензия'),
-        ('none', 'Без модели'),
-    ]
-    distribution_model = models.CharField(max_length=50, choices=DISTRIBUTION_CHOICES, default='none')
+    distribution_model = models.ForeignKey(Distributions, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('user', 'product')
+        verbose_name = 'Продукт пользователя'
+        verbose_name_plural = 'Продукты пользователей'
 
     def __str__(self):
         return f'{self.user.nickname} - {self.product.name}'
