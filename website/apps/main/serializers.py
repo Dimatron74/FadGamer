@@ -1,6 +1,6 @@
 # apps/main/serializers.py
 from rest_framework import serializers
-from .models import AcquisitionMethod, Service
+from .models import AcquisitionMethod, Service, Products
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,3 +13,27 @@ class AcquisitionMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = AcquisitionMethod
         fields = ['id', 'service', 'url', 'is_internal']
+
+class ProductSerializer(serializers.ModelSerializer):
+    cover_image_url = serializers.SerializerMethodField()
+    product_type = serializers.CharField(source='product_type.name', read_only=True)
+
+    class Meta:
+        model = Products
+        fields = [
+            'id',
+            'name',
+            'slug',
+            'description',
+            'cover_image',
+            'cover_image_url',
+            'product_type',
+            'is_published'
+        ]
+        read_only_fields = ['is_published']
+
+    def get_cover_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.cover_image:
+            return request.build_absolute_uri(obj.cover_image.url)
+        return None

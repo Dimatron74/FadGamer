@@ -1,7 +1,10 @@
-from django.urls import path
-from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import NewsViewSet
+
+router = DefaultRouter()
+router.register('', NewsViewSet)
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    # Добавьте другие маршруты по мере необходимости
+    path('', include(router.urls)),
 ]

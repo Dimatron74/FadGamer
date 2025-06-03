@@ -5,7 +5,8 @@ from .models import PromoCode, PromoCodeBonus, BonusType, UserPromoCodeActivatio
 from ..support.models import Products
 from ..profiles.models import User
 from django.utils import timezone
-
+from apps.news.models import News, NewsBlock
+from apps.main.serializers import ProductSerializer
 
 class BonusTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,3 +96,18 @@ class UserPromoCodeActivationSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPromoCodeActivation
         fields = ['id', 'user', 'promocode', 'activated_at', 'is_applied']
+
+class NewsBlockSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsBlock
+        fields = ['id', 'block_type', 'content', 'image', 'video_url', 'order']
+
+
+class NewsSerializer(serializers.ModelSerializer):
+    blocks = NewsBlockSerializer(many=True, required=False)
+    product = ProductSerializer(read_only=True)
+
+    class Meta:
+        model = News
+        fields = ['id', 'title', 'slug', 'short_description', 'cover_image', 'product',
+                  'is_published', 'created_at', 'updated_at', 'blocks']

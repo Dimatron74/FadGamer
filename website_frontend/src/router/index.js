@@ -16,6 +16,11 @@ import PromoCodeModal from '@/components/admin/PromoCodeModal.vue'
 import AdminPromoCodesView from '@/views/admin/AdminPromoCodesView.vue'
 import GamesView from '@/views/games/GamesView.vue'
 import GameDetailView from '@/views/games/GameDetailView.vue'
+import NewsListView from '@/views/news/NewsListView.vue'
+import NewsDetailView from '@/views/news/NewsDetailView.vue'
+import AdminNewsCreateView from '@/views/admin/AdminNewsCreateView.vue'
+import AdminNewsEditView from '@/views/admin/AdminNewsEditView.vue'
+import AdminNewsListView from '@/views/admin/AdminNewsListView.vue'
 
 import { noAuthMiddleware, authMiddleware } from './middleware/authMiddleware'
 import { adminMiddleware } from './middleware/adminMiddleware'
@@ -151,6 +156,21 @@ const router = createRouter({
           name: 'admin-promocode-detail',
           component: PromoCodeModal
         },
+        {
+          path: 'news/create',
+          name: 'admin-news-create',
+          component: AdminNewsCreateView
+        },
+        {
+          path: 'news/:slug/edit',
+          name: 'admin-news-edit',
+          component: AdminNewsEditView
+        },
+        {
+          path: 'news',
+          name: 'admin-news-list',
+          component: AdminNewsListView,
+        }
       ]
     },
     {
@@ -162,6 +182,16 @@ const router = createRouter({
       path: '/games/:slug',
       name: 'game-detail',
       component: GameDetailView
+    },
+    {
+      path: '/news',
+      name: 'news-list',
+      component: NewsListView
+    },
+    {
+      path: '/news/:slug',
+      name: 'news-detail',
+      component: NewsDetailView
     }
   ],
 })

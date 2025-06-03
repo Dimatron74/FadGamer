@@ -28,10 +28,10 @@ const menuItems = [
       { label: 'Блокировки', route: '/admin/blocked' },
     ]
   },
-  { label: 'Посты', route: '/admin/posts', icon: '📝' },
+  { label: 'Посты', route: '/admin/news', icon: '📰' },
   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
-  { label: 'База данных', route: '/admin/database', icon: '🎟️',
+  { label: 'База данных', route: '/admin/database', icon: '📝',
     children: [
       { label: 'Сервисы', route: '/admin/database/services' },
       { label: 'Продукты', route: '/admin/database/products' },
