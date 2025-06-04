@@ -2,7 +2,7 @@
 
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import PromoCodeViewSet, NewsCreateView, NewsEditView
+from .views import PromoCodeViewSet, NewsCreateView, NewsEditView, ContactRequestDetail, ContactRequestList
 from . import api
 
 router = DefaultRouter()
@@ -16,4 +16,8 @@ urlpatterns = [
     path('news/<str:slug>/edit/', NewsEditView.as_view(), name='news-edit'),
     path('news/list/', api.get_news_list, name='news-list'),
     path('news/<str:slug>/delete/', api.delete_news, name='news-delete'),
+    
+    # Подсистема связи
+    path('contact/', ContactRequestList.as_view(), name='contact-list'),
+    path('contact/<int:pk>/', ContactRequestDetail.as_view(), name='contact-detail'),
 ]

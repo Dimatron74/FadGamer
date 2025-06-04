@@ -41,3 +41,33 @@ class AcquisitionMethod(models.Model):
 
     def __str__(self):
         return f'{self.product.name} - {self.service.name}'
+    
+class EmailTemplate(models.Model):
+    name = models.CharField('Название шаблона', max_length=100, unique=True)
+    subject = models.CharField('Тема письма', max_length=255)
+    body = models.TextField('Тело письма')
+    html_body = models.TextField('HTML тело письма', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Шаблон электронного письма'
+        verbose_name_plural = 'Шаблоны электронных писем'
+
+class SentEmail(models.Model):
+    recipient = models.EmailField('Получатель')
+    subject = models.CharField('Тема', max_length=255)
+    body = models.TextField('Содержание')
+    sent_at = models.DateTimeField(auto_now_add=True)
+    is_sent = models.BooleanField(default=False)
+    error_message = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Письмо на {self.recipient} ({'отправлено' if self.is_sent else 'ошибка'})"
+
+    class Meta:
+        verbose_name = 'Отправленное письмо'
+        verbose_name_plural = 'Отправленные письма'

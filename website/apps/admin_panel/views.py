@@ -3,9 +3,12 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.generics import RetrieveUpdateAPIView, ListAPIView
 from .models import PromoCode, Products, BonusType, UserPromoCodeActivation
 from .serializers import PromoCodeSerializer, ServiceSerializer, BonusTypeSerializer, NewsSerializer
 from apps.news.models import News
+from apps.contact.models import ContactRequest
+from apps.contact.serializers import ContactRequestSerializer
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -239,3 +242,11 @@ class NewsEditView(APIView):
             blocks.append(item)
             i += 1
         return blocks
+    
+class ContactRequestDetail(RetrieveUpdateAPIView):
+    queryset = ContactRequest.objects.all()
+    serializer_class = ContactRequestSerializer
+
+class ContactRequestList(ListAPIView):
+    queryset = ContactRequest.objects.all()
+    serializer_class = ContactRequestSerializer

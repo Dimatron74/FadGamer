@@ -72,3 +72,4 @@ coverage
 
 *models
 website/media/
+*.env

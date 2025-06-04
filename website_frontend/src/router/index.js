@@ -21,6 +21,8 @@ import NewsDetailView from '@/views/news/NewsDetailView.vue'
 import AdminNewsCreateView from '@/views/admin/AdminNewsCreateView.vue'
 import AdminNewsEditView from '@/views/admin/AdminNewsEditView.vue'
 import AdminNewsListView from '@/views/admin/AdminNewsListView.vue'
+import AdminContactView from '@/views/admin/AdminContactView.vue'
+import AdminContactDetailView from '@/views/admin/AdminContactDetailView.vue'
 
 import { noAuthMiddleware, authMiddleware } from './middleware/authMiddleware'
 import { adminMiddleware } from './middleware/adminMiddleware'
@@ -170,7 +172,17 @@ const router = createRouter({
           path: 'news',
           name: 'admin-news-list',
           component: AdminNewsListView,
-        }
+        },
+        {
+          path: 'contacts',
+          name: 'admin-contacts',
+          component: AdminContactView,
+        },
+        {
+          path: 'contacts/:id',
+          name: 'admin-contacts-detail',
+          component: AdminContactDetailView
+        },
       ]
     },
     {

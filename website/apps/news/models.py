@@ -1,3 +1,5 @@
+# news/models.py
+
 from django.db import models
 from apps.main.models import Products
 

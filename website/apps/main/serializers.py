@@ -1,6 +1,6 @@
 # apps/main/serializers.py
 from rest_framework import serializers
-from .models import AcquisitionMethod, Service, Products
+from .models import *
 
 class ServiceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,3 +37,15 @@ class ProductSerializer(serializers.ModelSerializer):
         if obj.cover_image:
             return request.build_absolute_uri(obj.cover_image.url)
         return None
+    
+class SentEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SentEmail
+        fields = ['id', 'recipient', 'subject', 'body', 'sent_at', 'is_sent', 'error_message']
+        read_only_fields = fields
+
+class EmailTemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmailTemplate
+        fields = ['id', 'name', 'subject', 'body', 'html_body', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']

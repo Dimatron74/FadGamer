@@ -1,3 +1,5 @@
+# news/serializers.py
+
 from rest_framework import serializers
 from .models import News, NewsBlock
 from apps.main.serializers import ProductSerializer

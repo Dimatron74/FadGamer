@@ -1,10 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from apps.main.email_service import send_company_email
 
-# def index(request):
-#     return HttpResponse("главная страница")
+class SendCompanyEmail(APIView):
+    permission_classes = [IsAdminUser]
 
-from django.shortcuts import render
+    def post(self, request):
+        recipient = request.data.get("recipient")
+        template_name = request.data.get("template_name")
+        context = request.data.get("context", {})
 
-def index(request):
-    return render(request, 'main/index.html')
+        success = send_company_email(recipient, template_name, context)
+        return Response({"success": success})

@@ -18,36 +18,46 @@ watch(
   { immediate: true } // Проверяем сразу при монтировании
 )
 
+// const menuItems = [
+//   { label: 'Главная', route: '/admin' },
+//   {
+//     label: 'Аккаунты',
+//     icon: '👥',
+//     children: [
+//       { label: 'Пользователи', route: '/admin/users' },
+//       { label: 'Блокировки', route: '/admin/blocked' },
+//     ]
+//   },
+//   { label: 'Посты', route: '/admin/news', icon: '📰' },
+//   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
+//   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
+//   {
+//     label: 'Обращения',
+//     icon: '📨',
+//     route: '/admin/contacts'
+//   },
+//   {
+//     label: 'Статистика',
+//     icon: '📊',
+//     children: [
+//       { label: 'Общая статистика', route: '/admin/stats/general' },
+//       { label: 'Активность', route: '/admin/stats/activity' },
+//       { label: 'Графики', route: '/admin/stats/charts' }
+//     ]
+//   },
+//   { label: 'Настройки', route: '/admin/settings', icon: '⚙️' }
+// ]
+
 const menuItems = [
   { label: 'Главная', route: '/admin' },
-  {
-    label: 'Аккаунты',
-    icon: '👥',
-    children: [
-      { label: 'Пользователи', route: '/admin/users' },
-      { label: 'Блокировки', route: '/admin/blocked' },
-    ]
-  },
   { label: 'Посты', route: '/admin/news', icon: '📰' },
   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
-  { label: 'База данных', route: '/admin/database', icon: '📝',
-    children: [
-      { label: 'Сервисы', route: '/admin/database/services' },
-      { label: 'Продукты', route: '/admin/database/products' },
-      { label: 'Игры', route: '/admin/database/games' }
-    ]
-  },
   {
-    label: 'Статистика',
-    icon: '📊',
-    children: [
-      { label: 'Общая статистика', route: '/admin/stats/general' },
-      { label: 'Активность', route: '/admin/stats/activity' },
-      { label: 'Графики', route: '/admin/stats/charts' }
-    ]
-  },
-  { label: 'Настройки', route: '/admin/settings', icon: '⚙️' }
+    label: 'Обращения',
+    icon: '📨',
+    route: '/admin/contacts'
+  }
 ]
 
 // Активное меню

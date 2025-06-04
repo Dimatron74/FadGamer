@@ -38,5 +38,15 @@ export default {
   // Удаление новости
   deleteNews(slug) {
     return apiClient.delete(`/admin_panel/news/${slug}/delete/`)
+  },
+  // Подсистема связи
+  getContactRequests() {
+    return apiClient.get('/admin_panel/contact/')
+  },
+  getContactRequest(id) {
+    return apiClient.get(`/admin_panel/contact/${id}/`)
+  },
+  sendResponse(id, data) {
+    return apiClient.patch(`/admin_panel/contact/${id}/`, data)
   }
 }
