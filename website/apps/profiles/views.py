@@ -26,16 +26,5 @@ class MyTokenObtainPairView(APIView):
                 return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-        
-
-
-from django.utils.translation import gettext as _
-
-def my_view(request):
-    message = _("Hello, world!")
-    message2 = _("You are next")
-    message3 = _("Hello, world!")
-    print(message)
-    return HttpResponse(message)
 
     

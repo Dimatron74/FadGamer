@@ -24,7 +24,6 @@ def send_company_email(recipient, template_name, context=None):
 
     from smtplib import SMTPException
     try:
-        print('Тут ещё работает')
 
         # Явное создание SMTP-соединения с таймаутом
         connection = get_connection(
@@ -53,7 +52,7 @@ def send_company_email(recipient, template_name, context=None):
         return True
 
     except SMTPException as e:
-        print(f"❌ Ошибка при отправке через SMTP: {str(e)}")
+        print(f"❌ Ошибка при отправке SMTP: {str(e)}")
         SentEmail.objects.create(
             recipient=recipient,
             subject=template.subject,

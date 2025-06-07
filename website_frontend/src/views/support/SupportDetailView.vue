@@ -24,6 +24,13 @@
             {{ statusText() }}
           </span>
           <span class="text-mywhite-1">ID: {{ ticket.id }}</span>
+          <button
+            v-if="ticket.status !== 'closed'"
+            @click="changeStatus('closed')"
+            class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-1 rounded text-sm"
+          >
+            Отключить ИИ
+          </button>
         </div>
         <div class="border-t border-myblack-4 mt-6"></div>
       </div>

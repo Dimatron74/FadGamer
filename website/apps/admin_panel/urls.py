@@ -20,4 +20,8 @@ urlpatterns = [
     # Подсистема связи
     path('contact/', ContactRequestList.as_view(), name='contact-list'),
     path('contact/<int:pk>/', ContactRequestDetail.as_view(), name='contact-detail'),
+
+    # Промокоды по API
+    path('api/user/promocodes/unclaimed/', api.get_unclaimed_promocodes, name='get-unclaimed-promocodes'),
+    path('api/user/promocodes/confirm/', api.confirm_promocode_rewards, name='confirm-promocode-rewards'),
 ]
