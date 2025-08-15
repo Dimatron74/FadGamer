@@ -92,6 +92,9 @@ class UserTicketViewSet(viewsets.ModelViewSet):
         executor.submit(run_async_in_thread, self.generate_and_save_ai_reply, ticket.description, ticket.id)
 
     def generate_and_save_ai_reply(self, prompt, ticket_id):
+        from django.conf import settings
+        if not settings.AI_SYSTEM_ENABLED:
+            return
         ai_response = generate_ai_response(prompt, ticket_id)
         ticket = Ticket.objects.get(id=ticket_id)
         Message.objects.create(
@@ -99,7 +102,6 @@ class UserTicketViewSet(viewsets.ModelViewSet):
             text=ai_response,
             sender_type='ai'
         )
-
         ticket.status = 'in_progress'
         ticket.save(update_fields=['status'])
 

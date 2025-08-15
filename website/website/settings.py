@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'guardian',
     'taggit',
     'modelcluster',
-    'tailwind',
     'theme',
     'django_browser_reload',
     "phonenumber_field",
@@ -274,8 +273,6 @@ ANONYMOUS_USER_ID = -1
 WAGTAILADMIN_BASE_URL = 'http://localhost:8000'
 WAGTAIL_SITE_NAME = "FadGamers"
 
-TAILWIND_APP_NAME = 'theme'
-
 
 
 # Email настройки
@@ -301,3 +298,7 @@ CACHES = {
         'TIMEOUT': 60 * 5,
     }
 }
+
+
+
+AI_SYSTEM_ENABLED = False

@@ -5,18 +5,21 @@ from llama_cpp import Llama
 import re
 from .rag.retriever import retrieve_relevant_documents
 from ..support.models import Message, Ticket
+from django.conf import settings
 
-# Путь к модели
-MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "Qwen3-1.7B-UD-Q8_K_XL.gguf"
-
-# Загружаем модель с кастомным шаблоном
-llm = Llama(
-    model_path=str(MODEL_PATH),
-    n_ctx=40000,
-    n_threads=2,
-    n_gpu_layers=-1,
-    verbose=False
-)
+if settings.AI_SYSTEM_ENABLED:
+    from llama_cpp import Llama
+    from .rag.retriever import retrieve_relevant_documents
+    MODEL_PATH = Path(__file__).parent.parent.parent / "models" / "Qwen3-1.7B-UD-Q8_K_XL.gguf"
+    llm = Llama(
+        model_path=str(MODEL_PATH),
+        n_ctx=40000,
+        n_threads=2,
+        n_gpu_layers=-1,
+        verbose=False
+    )
+else:
+    retrieve_relevant_documents = lambda *_args, **_kwargs: []
 
 
 
@@ -128,6 +131,9 @@ def build_rag_prompt(user_message: str, ticket_id=None):
     return full_prompt
 
 def generate_ai_response(prompt: str, ticket_id=None) -> str:
+    if not settings.AI_SYSTEM_ENABLED:
+        return "ИИ отключён в настройках. Ответ сформирован не будет."
+    
     chat_prompt = build_rag_prompt(prompt, ticket_id=ticket_id)
 
     output = llm.create_chat_completion(
