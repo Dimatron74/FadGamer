@@ -38,7 +38,7 @@
           <button
             class="mt-4 w-full py-2 bg-mypurple-4 hover:bg-mypurple-5 text-white rounded transition-colors duration-200"
           >
-            Получить
+            Посмотреть
           </button>
         </div>
       </router-link>
