@@ -18,6 +18,9 @@ from .models import User, UserEmail, Email, UserProducts
 from .serializers import ProductUserSerializer
 import io
 from PIL import Image
+from ..main.email_service import send_company_email
+from django.utils import timezone
+import random 
 
 
 @api_view(['GET'])
@@ -134,51 +137,42 @@ def update_profile(request):
 
     # Обновление email
     if 'email' in data:
-        new_email = data['email'].strip()
+        new_email_str = data['email'].strip()
+
+        if not new_email_str:
+            return Response({'error': 'Email обязателен'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Валидация формата email (простая)
+        if '@' not in new_email_str or '.' not in new_email_str:
+            return Response({'error': 'Некорректный email'}, status=status.HTTP_400_BAD_REQUEST)
 
         current_email = user.get_active_email()
+        if new_email_str == current_email:
+            return Response({'error': 'Этот email уже используется'}, status=status.HTTP_400_BAD_REQUEST)
 
-        if new_email != current_email:
+        # Создаем или получаем Email объект
+        email_obj, _ = Email.objects.get_or_create(email=new_email_str)
 
-            # Проверяем, используется ли этот email другим пользователем (активно)
-            existing_email = Email.objects.filter(email=new_email).first()
-            if existing_email:
-                if UserEmail.objects.filter(
-                    email=existing_email,
-                    is_active=True
-                ).exclude(user=user).exists():
-                    return Response({
-                        'error': 'Этот email уже используется другим аккаунтом'
-                    }, status=status.HTTP_400_BAD_REQUEST)
+        # Проверяем, используется ли этот email другим пользователем активно
+        if UserEmail.objects.filter(email=email_obj, is_active=True).exclude(user=user).exists():
+            return Response({'error': 'Этот email уже используется другим аккаунтом'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Получаем или создаём объект Email
-            email_obj, created = Email.objects.get_or_create(email=new_email)
+        # Создаем новый UserEmail (не активный)
+        user_email, created = UserEmail.objects.get_or_create(user=user, email=email_obj, defaults={
+            'is_active': False,
+            'is_confirmed': False
+        })
 
-            # Деактивируем текущий email пользователя
-            if current_email:
-                try:
-                    current_email_entry = user.useremail_set.get(email__email=current_email, is_active=True)
-                    current_email_entry.is_active = False
-                    current_email_entry.save()
-                except UserEmail.DoesNotExist:
-                    pass 
+        if not created and user_email.is_confirmed:
+            return Response({'error': 'Этот email уже подтвержден'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Проверяем, есть ли уже такая связь (пользователь + email)
-            existing_user_email = UserEmail.objects.filter(user=user, email=email_obj).first()
+        # Генерируем и отправляем код (используем метод из модели)
+        user_email.generate_confirmation_code()
+        context = {'code': user_email.confirmation_code}
+        send_company_email(new_email_str, 'email_confirmation', context)
 
-            if existing_user_email:
-                # Обновляем существующую запись вместо создания новой
-                existing_user_email.is_active = True
-                existing_user_email.is_confirmed = False  # можно оставить без подтверждения или отправить ссылку
-                existing_user_email.save()
-            else:
-                # Создаём новую связь только если такой ещё нет
-                UserEmail.objects.create(
-                    user=user,
-                    email=email_obj,
-                    is_active=True,
-                    is_confirmed=False  # можно отправить ссылку подтверждения
-                )
+        # Не сохраняем user здесь, так как изменения в user_email
+        return Response({'message': 'Код подтверждения отправлен на email'}, status=status.HTTP_200_OK)
 
     user.save()
     return Response({'message': 'Профиль успешно обновлен'})
@@ -245,3 +239,27 @@ def get_user_products(request):
     products = UserProducts.objects.filter(user=user).select_related('product', 'distribution_model')
     serializer = ProductUserSerializer(products, many=True, context={'request': request})
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
+def confirm_email(request):
+    user = request.user
+    data = request.data
+    code = data.get('code')
+    email_str = data.get('email')  # Frontend отправит email, для которого код
+
+    if not code or not email_str:
+        return Response({'error': 'Код и email обязательны'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        email_obj = Email.objects.get(email=email_str)
+        user_email = UserEmail.objects.get(user=user, email=email_obj)
+    except (Email.DoesNotExist, UserEmail.DoesNotExist):
+        return Response({'error': 'Email не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+    if user_email.verify_code(code):
+        return Response({'message': 'Email подтвержден'}, status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'Неверный или просроченный код'}, status=status.HTTP_400_BAD_REQUEST)

@@ -45,5 +45,8 @@ export default {
   },
   getUserProducts() {
     return apiClient.get('/profiles/products/')
-  }
+  },
+  confirmEmail(data) {
+    return apiClient.post('/profiles/confirm-email/', data)
+  },
 }

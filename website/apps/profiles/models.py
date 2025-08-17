@@ -5,7 +5,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager, Group
 from phonenumber_field.modelfields import PhoneNumberField
 from ..main.models import Products, Service
-
+from django.utils import timezone
+from datetime import timedelta
+import random
 
 
 class UserManager(BaseUserManager):
@@ -62,6 +64,27 @@ class UserEmail(models.Model):
     is_confirmed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    confirmation_code = models.CharField(max_length=6, blank=True, null=True)
+    code_expires_at = models.DateTimeField(blank=True, null=True)
+
+    # Новый метод для генерации кода
+    def generate_confirmation_code(self):
+        self.confirmation_code = ''.join(random.choices('0123456789', k=6))
+        self.code_expires_at = timezone.now() + timedelta(minutes=10)
+        self.save()
+
+    # Метод для проверки кода
+    def verify_code(self, code):
+        if self.confirmation_code == code and self.code_expires_at > timezone.now():
+            self.confirmation_code = None  # Очищаем код после успешной верификации
+            self.code_expires_at = None
+            self.is_confirmed = True
+            self.is_active = True
+            self.save()
+            # Деактивируем другие emails пользователя
+            UserEmail.objects.filter(user=self.user).exclude(pk=self.pk).update(is_active=False, is_confirmed=False)
+            return True
+        return False
 
     class Meta:
         unique_together = ('user', 'email')
