@@ -105,7 +105,7 @@ class NewsCreateView(APIView):
             block_type = data[f'blocks[{i}][block_type]']
             item = {'block_type': block_type, 'order': int(data[f'blocks[{i}][order]'])}
 
-            if block_type == 'text' or block_type == 'quote':
+            if block_type == 'text' or block_type == 'quote' or block_type == 'quill':
                 item['content'] = data.get(f'blocks[{i}][content]', '')
             elif block_type == 'video':
                 item['video_url'] = data.get(f'blocks[{i}][video_url]', '')

@@ -50,6 +50,11 @@
                       class="w-full p-2 rounded bg-myblack-2 text-mywhite-5 border border-myblack-4"></textarea>
           </div>
 
+          <div v-if="block.block_type === 'tiptap'" class="mb-3">
+            <label class="block text-xs text-mywhite-3 mb-1">Текст (расширенный)</label>
+            <TiptapEditor v-model="block.content" />
+          </div>
+
           <div v-if="block.block_type === 'image'" class="mb-3">
             <label class="block text-xs text-mywhite-3 mb-1">Изображение</label>
             <div v-if="block.image" class="mb-2">
@@ -120,7 +125,8 @@ const error = ref(null)
 
 // Типы блоков
 const blockTypes = [
-  { value: 'text', label: 'Текст' },
+  { value: 'text', label: 'Текст (обычный)' },
+  { value: 'tiptap', label: 'Текст (расширенный)' },
   { value: 'image', label: 'Изображение' },
   { value: 'video', label: 'Видео' },
   { value: 'quote', label: 'Цитата' }
@@ -209,7 +215,7 @@ async function submit() {
     formData.append(`blocks[${index}][block_type]`, block.block_type)
     formData.append(`blocks[${index}][order]`, block.order)
 
-    if (block.block_type === 'text' || block.block_type === 'quote') {
+    if (block.block_type === 'text' || block.block_type === 'quote' || block.block_type === 'tiptap') {
       formData.append(`blocks[${index}][content]`, block.content)
     } else if (block.block_type === 'video') {
       formData.append(`blocks[${index}][video_url]`, block.video_url)

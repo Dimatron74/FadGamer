@@ -9,6 +9,7 @@ import axios from 'axios'
 import VueCookies from 'vue-cookies'
 import VueScrollTo from 'vue-scrollto'
 import i18n from '@/components/locales/i18n.js'
+import 'quill/dist/quill.snow.css'
 
 
 

@@ -42,9 +42,18 @@
 
           <!-- Контент -->
           <div v-if="block.block_type === 'text'" class="mb-3">
-            <label class="block text-xs text-mywhite-3 mb-1">Текст</label>
+            <label class="block text-xs text-mywhite-3 mb-1">Текст (обычный)</label>
             <textarea v-model="block.content" rows="4"
                       class="w-full p-2 rounded bg-myblack-2 text-mywhite-5 border border-myblack-4"></textarea>
+          </div>
+
+          <!-- Tiptap -->
+          <div v-if="block.block_type === 'tiptap'" class="mb-3">
+            <label class="block text-xs text-mywhite-3 mb-1">Текст (расширенный)</label>
+            <TiptapEditor
+              v-model="block.content"
+              class="w-full p-2 rounded bg-myblack-2 text-mywhite-5 border border-myblack-4"
+            />
           </div>
 
           <div v-if="block.block_type === 'image'" class="mb-3">
@@ -94,6 +103,7 @@
 import AdminService from '@/services/AdminService'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import TiptapEditor from '@/components/main/TiptapEditor.vue'
 
 const router = useRouter()
 
@@ -106,7 +116,8 @@ const form = ref({
 
 // Типы блоков
 const blockTypes = [
-  { value: 'text', label: 'Текст' },
+  { value: 'text', label: 'Текст (обычный)' },
+  { value: 'tiptap', label: 'Текст (расширенный)' },
   { value: 'image', label: 'Изображение' },
   { value: 'video', label: 'Видео' },
   { value: 'quote', label: 'Цитата' }
@@ -165,7 +176,7 @@ async function submit() {
     formData.append(`blocks[${index}][block_type]`, block.block_type)
     formData.append(`blocks[${index}][order]`, block.order)
 
-    if (block.block_type === 'text' || block.block_type === 'quote') {
+    if (block.block_type === 'text' || block.block_type === 'quote' || block.block_type === 'tiptap') {
       formData.append(`blocks[${index}][content]`, block.content)
     } else if (block.block_type === 'image' && block.image) {
       formData.append(`blocks[${index}][image]`, block.image)

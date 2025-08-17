@@ -5,7 +5,9 @@
 
     <div v-else class="max-w-4xl mx-auto">
       <div class="mb-6">
-        <img :src="news.cover_image" :alt="news.title" class="w-full h-64 object-cover rounded-lg mb-4">
+        <div class="w-full max-h-[500px] flex items-center justify-center rounded-lg mb-4">
+          <img :src="news.cover_image" :alt="news.title" class="max-w-full max-h-[500px] object-contain">
+        </div>
         <h1 class="text-3xl font-bold mb-2">{{ news.title }}</h1>
         <p class="text-mywhite-3 mb-4">{{ news.short_description }}</p>
         <p class="text-xs text-mywhite-2">Опубликовано: {{ formatDate(news.created_at) }}</p>
@@ -17,6 +19,9 @@
         <div v-for="block in news.blocks" :key="block.id" class="bg-myblack-2 p-4 rounded-lg">
           <!-- Текст -->
           <div v-if="block.block_type === 'text'" class="prose prose-invert max-w-none" v-html="block.content"></div>
+
+          <!-- Tiptap (расширенный текст) -->
+          <div v-else-if="block.block_type === 'tiptap'" class="tiptap-output" v-html="block.content"></div>
 
           <!-- Изображение -->
           <div v-if="block.block_type === 'image'" class="my-4">
@@ -58,6 +63,7 @@ onMounted(async () => {
     const slug = route.params.slug
     const response = await NewsService.getNewsBySlug(slug)
     news.value = response.data
+    console.log('Загруженные данные новости:', news.value)
   } catch (err) {
     error.value = 'Ошибка загрузки новости'
     console.error(err)

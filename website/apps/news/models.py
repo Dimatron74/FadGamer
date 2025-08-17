@@ -24,6 +24,7 @@ class News(models.Model):
 class NewsBlock(models.Model):
     BLOCK_TYPES = (
         ('text', 'Текст'),
+        ('tiptap', 'Редактор текста Tiptap'),
         ('image', 'Изображение'),
         ('video', 'Видео'),
         ('quote', 'Цитата'),
