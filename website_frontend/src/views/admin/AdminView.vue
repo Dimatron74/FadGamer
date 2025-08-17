@@ -18,38 +18,16 @@ watch(
   { immediate: true } // Проверяем сразу при монтировании
 )
 
-// const menuItems = [
-//   { label: 'Главная', route: '/admin' },
-//   {
-//     label: 'Аккаунты',
-//     icon: '👥',
-//     children: [
-//       { label: 'Пользователи', route: '/admin/users' },
-//       { label: 'Блокировки', route: '/admin/blocked' },
-//     ]
-//   },
-//   { label: 'Посты', route: '/admin/news', icon: '📰' },
-//   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
-//   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
-//   {
-//     label: 'Обращения',
-//     icon: '📨',
-//     route: '/admin/contacts'
-//   },
-//   {
-//     label: 'Статистика',
-//     icon: '📊',
-//     children: [
-//       { label: 'Общая статистика', route: '/admin/stats/general' },
-//       { label: 'Активность', route: '/admin/stats/activity' },
-//       { label: 'Графики', route: '/admin/stats/charts' }
-//     ]
-//   },
-//   { label: 'Настройки', route: '/admin/settings', icon: '⚙️' }
-// ]
-
 const menuItems = [
   { label: 'Главная', route: '/admin' },
+  {
+    label: 'Аккаунты',
+    icon: '👥',
+    children: [
+      { label: 'Пользователи', route: '/admin/users' },
+      { label: 'Блокировки', route: '/admin/blocked' },
+    ]
+  },
   { label: 'Посты', route: '/admin/news', icon: '📰' },
   { label: 'Тех. Поддержка', route: '/admin/support', icon: '💬' },
   { label: 'Промокоды', route: '/admin/promocodes', icon: '🎟️' },
@@ -57,7 +35,17 @@ const menuItems = [
     label: 'Обращения',
     icon: '📨',
     route: '/admin/contacts'
-  }
+  },
+  {
+    label: 'Статистика',
+    icon: '📊',
+    children: [
+      { label: 'Общая статистика', route: '/admin/stats/general' },
+      { label: 'Активность', route: '/admin/stats/activity' },
+      { label: 'Графики', route: '/admin/stats/charts' }
+    ]
+  },
+  { label: 'Настройки', route: '/admin/settings', icon: '⚙️' },
 ]
 
 // Активное меню

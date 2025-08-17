@@ -8,6 +8,10 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
 class Platform(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -15,6 +19,10 @@ class Platform(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = 'Платформа'
+        verbose_name_plural = 'Платформы'
 
 class Feature(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -22,8 +30,12 @@ class Feature(models.Model):
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = 'Особенность'
+        verbose_name_plural = 'Особенности'
 
-class Game(Products):  # Наследуется от Product
+class Game(Products):  # Наследуется от Products
     genres = models.ManyToManyField(Genre, related_name='games')
     platforms = models.ManyToManyField(Platform, related_name='games')
     features = models.ManyToManyField(Feature, related_name='games')

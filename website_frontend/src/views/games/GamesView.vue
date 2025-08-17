@@ -17,6 +17,7 @@
         :key="game.id"
         :to="{ name: 'game-detail', params: { slug: game.slug } }"
         class="block bg-myblack-3 rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
+        @click="scrollToTop"
       >
         <img
           :src="game.cover_image"
@@ -67,4 +68,9 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+// Прокрутка к верху при переходе по ссылке
+function scrollToTop() {
+  window.scrollTo(0,0)
+}
 </script>

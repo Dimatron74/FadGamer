@@ -95,6 +95,8 @@ class UserTicketViewSet(viewsets.ModelViewSet):
         from django.conf import settings
         if not settings.AI_SYSTEM_ENABLED:
             return
+        if not prompt:
+            return
         ai_response = generate_ai_response(prompt, ticket_id)
         ticket = Ticket.objects.get(id=ticket_id)
         Message.objects.create(
@@ -123,7 +125,7 @@ class UserTicketViewSet(viewsets.ModelViewSet):
 # ==== Admin Ticket ViewSet (все тикеты, только для is_staff) ====
 class AdminTicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
-    permission_classes = [permissions.IsAdminUser]  # Только для is_staff
+    permission_classes = [permissions.IsAdminUser] 
 
     def get_queryset(self):
         return Ticket.objects.order_by(

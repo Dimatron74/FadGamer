@@ -14,7 +14,7 @@ class Category(models.Model):
         Products,
         on_delete=models.CASCADE,
         related_name='categories',
-        verbose_name='Сервис'
+        verbose_name='Продукт'
     )
     name = models.CharField('Название', max_length=100)
     slug = models.SlugField('Slug')

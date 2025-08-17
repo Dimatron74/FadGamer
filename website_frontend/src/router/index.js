@@ -206,6 +206,15 @@ const router = createRouter({
       component: NewsDetailView
     }
   ],
+  scrollBehavior(to, from, savedPosition) {
+    // Если есть сохранённая позиция (например, при "назад"), вернём её
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      // Всегда скроллим в самый верх при обычной навигации
+      return { left: 0, top: 0 }
+    }
+  }
 })
 
 router.beforeEach(async (to, from, next) => {

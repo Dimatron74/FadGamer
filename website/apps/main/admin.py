@@ -5,3 +5,4 @@ admin.site.register(Service)
 admin.site.register(AcquisitionMethod)
 admin.site.register(SentEmail)
 admin.site.register(EmailTemplate)
+

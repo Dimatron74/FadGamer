@@ -32,6 +32,10 @@ class Service(models.Model):
     def __str__(self):
         return self.name
     
+    class Meta:
+        verbose_name = 'Сервис'
+        verbose_name_plural = 'Сервисы'
+    
 # Где приобрести    
 class AcquisitionMethod(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='acquisition_methods')
@@ -42,6 +46,10 @@ class AcquisitionMethod(models.Model):
     def __str__(self):
         return f'{self.product.name} - {self.service.name}'
     
+    class Meta:
+        verbose_name = 'Метод приобретения'
+        verbose_name_plural = 'Методы приобретения'
+
 class EmailTemplate(models.Model):
     name = models.CharField('Название шаблона', max_length=100, unique=True)
     subject = models.CharField('Тема письма', max_length=255)

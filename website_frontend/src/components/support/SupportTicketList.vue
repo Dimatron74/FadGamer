@@ -8,7 +8,6 @@
         bg-myblack-2 rounded-lg p-4 border border-myblack-4 hover:border-mypurple-4
         transition-all cursor-pointer block
       "
-      @click="scrollToTop"
     >
       <div class="flex justify-between items-start">
         <div>
@@ -80,10 +79,5 @@ function statusClass(status) {
     default:
       return 'bg-red-900/30 text-red-400'
   }
-}
-
-// Прокрутка к верху при переходе по ссылке
-function scrollToTop() {
-  window.scrollTo(0,0)
 }
 </script>

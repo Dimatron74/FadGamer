@@ -132,7 +132,7 @@ def build_rag_prompt(user_message: str, ticket_id=None):
 
 def generate_ai_response(prompt: str, ticket_id=None) -> str:
     if not settings.AI_SYSTEM_ENABLED:
-        return "ИИ отключён в настройках. Ответ сформирован не будет."
+        return "ИИ отключён в настройках администратором. Ответ сформирован не будет."
     
     chat_prompt = build_rag_prompt(prompt, ticket_id=ticket_id)
 

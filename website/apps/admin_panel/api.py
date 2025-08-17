@@ -21,7 +21,7 @@ def create_news(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['PUT', 'PATCH'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated, IsAdminUser])
 @authentication_classes([JWTAuthentication])
 def update_news(request, slug):
     try:

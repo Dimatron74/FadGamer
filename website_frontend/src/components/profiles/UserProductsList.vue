@@ -1,6 +1,6 @@
 <template>
   <div class="bg-myblack-3 rounded-lg shadow-lg p-6">
-    <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Продукты</h2>
+    <!-- <h2 class="text-xl font-semibold text-mywhite-5 mb-4">Продукты</h2> -->
 
     <div v-if="loading" class="text-center py-4 text-mywhite-3">Загрузка...</div>
     <div v-else-if="error" class="text-red-500">{{ error }}</div>

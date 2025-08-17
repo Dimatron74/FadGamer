@@ -3,7 +3,7 @@
     <nav class="container mx-auto flex flex-col justify-center items-center text-mywhite-1">
       <ul class="flex items-center justify-center gap-5 text-sm pb-5">
         <li>
-          <RouterLink to="/about" class="hover:text-mywhite-5" @click="scrollToTop">{{ $t('navigation.about') }}</RouterLink>
+          <RouterLink to="/about" class="hover:text-mywhite-5">{{ $t('navigation.about') }}</RouterLink>
         </li>
         <li>
           <RouterLink to="/" class="">{{ $t('navigation.contact') }}</RouterLink>
@@ -68,9 +68,6 @@ const props = defineProps({
   }
 });
 
-function scrollToTop() {
-  window.scrollTo(0,0);
-}
 
 
 const { t, locale } = useI18n(); 

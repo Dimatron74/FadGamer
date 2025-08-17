@@ -26,9 +26,13 @@
         <div
           v-for="(newsItem, index) in newsItems"
           :key="newsItem.id"
-          :to="{ name: 'news-detail', params: { slug: newsItem.slug }}"
           @mouseenter="setActiveNews(index)"
-          class="group cursor-pointer p-3 rounded-lg bg-myblack-2 hover:bg-myblack-3 transition-all duration-300 border-l-4 border-transparent hover:border-mypurple-4 shadow-sm"
+          class="group cursor-pointer p-3 rounded-lg transition-all duration-300 shadow-sm"
+          :class="[
+            activeNews?.id === newsItem.id
+              ? 'bg-myblack-3 border-l-4 border-mypurple-4'
+              : 'bg-myblack-2 border-l-4 border-transparent hover:bg-myblack-3 hover:border-mypurple-4'
+          ]"
         >
           <router-link :to="{ name: 'news-detail', params: { slug: newsItem.slug }}">
             <h3 class="text-lg font-semibold group-hover:text-mypurple-4 transition-colors duration-300 line-clamp-1">
